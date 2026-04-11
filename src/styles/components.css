@@ -46,3 +46,27 @@
   from { opacity: 0; transform: translateY(10px); }
   to { opacity: 1; transform: translateY(0); }
 }
+
+@keyframes pulse-anim {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+.skeleton-pulse {
+  animation: pulse-anim 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+.spin-anim {
+  animation: spin 1s linear infinite;
+}
+
+/* Responsiveness helpers */
+@media (max-width: 420px) {
+  .hide-on-mobile {
+    display: none;
+  }
+}
