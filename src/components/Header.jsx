@@ -1,6 +1,6 @@
 import { Clock, RefreshCw, BadgeInfo, Star, Building2 } from 'lucide-react';
 
-export default function Header({ userData, isSyncing, lastSync }) {
+export default function Header({ userData, isSyncing, lastSync, onSync }) {
   if (!userData) return null;
 
   // Extraer iniciales (ej: Carlos Lopez => CL)
@@ -44,22 +44,36 @@ export default function Header({ userData, isSyncing, lastSync }) {
       </div>
       <div style={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column', justifyContent: 'center' }}>
          <div style={{ color: 'var(--text-muted)', fontWeight: 'bold', fontSize: '0.75rem', marginBottom: '4px', display: 'flex', alignItems: 'center' }}>
-            <Clock size={12} style={{marginRight: 4}}/> SINCRONIZACIÓN
+            <Clock size={12} style={{marginRight: 4}}/> ACTUALIZACIÓN MANUAL
          </div>
-         <div style={{ 
-           background: isSyncing ? '#dbeafe' : '#f8fafc', 
-           color: '#2563eb', 
-           padding: '4px 10px', 
-           borderRadius: '20px', 
-           fontWeight: 700, 
-           fontSize: '0.7rem', 
-           display: 'flex', 
-           alignItems: 'center',
-           border: '1px solid #bfdbfe'
-         }}>
-            <RefreshCw size={12} className={isSyncing ? "spin-anim" : ""} style={{marginRight: 6}}/> 
-            {isSyncing ? 'Sincronizando...' : lastSync}
-         </div>
+         <button 
+           onClick={onSync}
+           disabled={isSyncing}
+           style={{ 
+             background: isSyncing ? '#dbeafe' : '#f8fafc', 
+             color: '#2563eb', 
+             padding: '6px 12px', 
+             borderRadius: '20px', 
+             fontWeight: 800, 
+             fontSize: '0.75rem', 
+             display: 'flex', 
+             alignItems: 'center',
+             border: '1px solid #bfdbfe',
+             cursor: isSyncing ? 'not-allowed' : 'pointer',
+             transition: 'all 0.2s',
+             boxShadow: '0 2px 4px rgba(37, 99, 235, 0.1)',
+             opacity: isSyncing ? 0.7 : 1
+           }}
+           onMouseEnter={(e) => {
+             if (!isSyncing) e.currentTarget.style.background = '#eff6ff';
+           }}
+           onMouseLeave={(e) => {
+             if (!isSyncing) e.currentTarget.style.background = '#f8fafc';
+           }}
+         >
+            <RefreshCw size={14} className={isSyncing ? "spin-anim" : ""} style={{marginRight: 6}}/> 
+            {isSyncing ? 'Sincronizando...' : `Refrescar (${lastSync})`}
+         </button>
       </div>
     </header>
   );

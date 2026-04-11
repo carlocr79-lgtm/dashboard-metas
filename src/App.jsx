@@ -20,10 +20,8 @@ function Dashboard({ data, userEmail, setDashboardData }) {
   const [lastSync, setLastSync] = useState(
     new Date().toLocaleTimeString('es-PE', { hour: '2-digit', minute: '2-digit', hour12: true }).toLowerCase()
   );
-  const syncIntervalRef = useRef(null);
-
-  // ═══ AUTO-SYNC cada 15 segundos ═══
-  const autoSync = useCallback(async () => {
+  // ═══ SINCRONIZACIÓN MANUAL ═══
+  const handleManualSync = useCallback(async () => {
     if (!userEmail) return;
     setIsSyncing(true);
     try {
@@ -35,22 +33,10 @@ function Dashboard({ data, userEmail, setDashboardData }) {
         );
       }
     } catch (err) {
-      console.error('[AutoSync] Error:', err);
+      console.error('[Sync] Error:', err);
     }
     setIsSyncing(false);
   }, [userEmail, setDashboardData]);
-
-  useEffect(() => {
-    // Iniciar auto-sync cada 15 segundos
-    syncIntervalRef.current = setInterval(autoSync, 15000);
-    return () => {
-      if (syncIntervalRef.current) clearInterval(syncIntervalRef.current);
-    };
-  }, [autoSync]);
-
-  const handleRefresh = () => {
-    autoSync();
-  };
 
   return (
     <div style={{ width: '100%', animation: 'fadeInScale 0.6s ease-out' }}>
@@ -58,25 +44,12 @@ function Dashboard({ data, userEmail, setDashboardData }) {
         userData={data} 
         isSyncing={isSyncing} 
         lastSync={lastSync} 
+        onSync={handleManualSync}
       />
       
       <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
 
       <main>
-        <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
-          <button onClick={handleRefresh} disabled={isSyncing} style={{ 
-            background: isSyncing ? '#dbeafe' : '#f1f5f9', 
-            border: '1px solid #cbd5e1', padding: '6px 12px', borderRadius: '8px', 
-            cursor: isSyncing ? 'not-allowed' : 'pointer', fontSize: '0.8rem', fontWeight: 600, 
-            display: 'flex', alignItems: 'center', gap: '6px',
-            opacity: isSyncing ? 0.7 : 1,
-            transition: 'all 0.3s ease'
-          }}>
-             <RefreshCw size={14} className={isSyncing ? 'spin-anim' : ''} /> 
-             {isSyncing ? 'Sincronizando...' : 'Refrescar Panel'}
-          </button>
-        </div>
-
         <ErrorBoundary>
           {activeTab === 'inicio' && <HomeTab data={data} />}
           {activeTab === 'metas' && <MetasTab data={data} />}
