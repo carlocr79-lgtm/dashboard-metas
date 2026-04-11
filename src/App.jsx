@@ -1,4 +1,5 @@
 import { useState } from 'react';
+import { RefreshCw } from 'lucide-react';
 import './styles/variables.css';
 import './styles/components.css';
 
@@ -55,7 +56,7 @@ function App() {
             <main>
               <div style={{ display: 'flex', justifyContent: 'flex-end', marginBottom: '16px' }}>
                 <button onClick={handleSimularSincronizacion} style={{ background: '#f1f5f9', border: '1px solid #cbd5e1', padding: '6px 12px', borderRadius: '8px', cursor: 'pointer', fontSize: '0.8rem', fontWeight: 600 }}>
-                   <i className="fas fa-sync" style={{marginRight: '6px'}}></i> Refrescar Panel
+                   <RefreshCw size={14} style={{marginRight: '6px'}} /> Refrescar Panel
                 </button>
               </div>
 
