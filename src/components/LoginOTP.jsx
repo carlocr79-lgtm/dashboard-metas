@@ -51,18 +51,23 @@ export default function LoginOTP({ onLoginSuccess }) {
       }
 
       // Si rechaza el modo directo y pide validación, iniciamos flujo OTP normal
-      if (dataSinOTP.accessDenied && ((dataSinOTP.error && (dataSinOTP.error.includes('desarrollo') || dataSinOTP.error.includes('Verificación'))) || (dataSinOTP.mensaje && dataSinOTP.mensaje.includes('directo')))) {
+      if (dataSinOTP.accessDenied) {
         await requestOTP();
         return;
       }
 
-      // Error duro (No existe, denegado real)
-      if (dataSinOTP.accessDenied || dataSinOTP.error) {
+      // Error duro
+      if (dataSinOTP.error) {
         setError(dataSinOTP.mensaje || dataSinOTP.error || 'Acceso no autorizado.');
       }
     } catch (err) {
-      // Fallback a mandar código normal si accederSinOTP falla
-      await requestOTP();
+      console.error('[Login] Error en accederSinOTP:', err);
+      // Fallback a mandar código normal
+      try {
+        await requestOTP();
+      } catch (otpErr) {
+        setError('No se pudo conectar con el servidor. Verifica tu conexión a internet.');
+      }
     } finally {
       setLoading(false);
     }
@@ -92,17 +97,21 @@ export default function LoginOTP({ onLoginSuccess }) {
     setError(null);
 
     try {
-      const data = await callGAS('validarCodigo', [email.toLowerCase().trim(), otp]);
+      // IMPORTANTE: El backend usa 'verificarCodigoYAcceder' (no 'validarCodigo')
+      const data = await callGAS('verificarCodigoYAcceder', [email.toLowerCase().trim(), otp]);
       
       if (data.accessDenied) {
-        setError(data.mensaje || 'Error de validación OTP.');
+        setError(data.mensaje || 'Código incorrecto o expirado.');
       } else if (data.nombre) {
-        // ÉXITO REAL
+        // ÉXITO REAL - El backend devolvió los datos del dashboard
         onLoginSuccess(data, email);
+      } else if (data.error) {
+        setError(data.error);
       } else {
-        setError('Código inválido o expirado.');
+        setError('Código inválido o expirado. Intenta de nuevo.');
       }
     } catch (err) {
+      console.error('[Login] Error en verificarCodigoYAcceder:', err);
       setError('Error al verificar código. Revisa tu conexión.');
     } finally {
       setLoading(false);

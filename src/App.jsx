@@ -10,6 +10,7 @@ import CampaignTab from './components/CampaignTab';
 import GeneralTab from './components/GeneralTab';
 import BoletasTab from './components/BoletasTab';
 import LoginOTP from './components/LoginOTP';
+import ErrorBoundary from './components/ErrorBoundary';
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -32,7 +33,7 @@ function App() {
   };
 
   return (
-    <>
+    <ErrorBoundary>
       <div className="bg-shape shape-1"></div>
       <div className="bg-shape shape-2"></div>
       <div className="bg-shape shape-3"></div>
@@ -67,7 +68,7 @@ function App() {
           </div>
         )}
       </div>
-    </>
+    </ErrorBoundary>
   );
 }
 

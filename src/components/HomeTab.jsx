@@ -55,7 +55,8 @@ export default function HomeTab({ data }) {
 
   // Lógica Bonos Resumen
   const bonos = data.bonos;
-  const comisiona = bonos && bonos.estadoMora.toLowerCase().includes('comisiona') && !bonos.estadoMora.toLowerCase().includes('no comisiona');
+  const estadoMoraStr = (bonos && bonos.estadoMora) ? bonos.estadoMora.toLowerCase() : '';
+  const comisiona = estadoMoraStr.includes('comisiona') && !estadoMoraStr.includes('no comisiona');
 
   return (
     <div className="home-tab-wrapper" style={{ animation: 'fadeIn 0.5s ease-out' }}>
