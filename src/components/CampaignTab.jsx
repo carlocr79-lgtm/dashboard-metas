@@ -1,7 +1,9 @@
 import { Trophy, Info, Sparkles } from 'lucide-react';
 
 export default function CampaignTab({ data }) {
-  if (!data || !data.campanias || data.campanias.length === 0) {
+  const campanias = Array.isArray(data?.campanias) ? data.campanias : [];
+  
+  if (!data || campanias.length === 0) {
     return (
       <div className="glass-card" style={{ textAlign: 'center', padding: '40px 20px', display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '16px' }}>
         <Trophy size={48} color="#cbd5e1" />
@@ -11,9 +13,9 @@ export default function CampaignTab({ data }) {
     );
   }
 
-  // Por ahora, renderizamos la primera activa (Lógica del código original)
-  const camp = data.campanias[0];
-  const rankingList = camp.ranking || [];
+  // Por ahora, renderizamos la primera activa
+  const camp = campanias[0];
+  const rankingList = Array.isArray(camp.ranking) ? camp.ranking : [];
 
   return (
     <div style={{ animation: 'fadeIn 0.5s ease-out' }}>

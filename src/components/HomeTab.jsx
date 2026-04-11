@@ -34,7 +34,7 @@ export default function HomeTab({ data }) {
   const colSem = getSemaforo(colPct, false);
 
   // Lógica Campaña Activa
-  const campanias = data.campanias || [];
+  const campanias = Array.isArray(data.campanias) ? data.campanias : [];
   const activas = campanias.filter(c => c.activa);
   let campTexto = 'Sin campaña';
   let campSub = 'No hay campañas activas';

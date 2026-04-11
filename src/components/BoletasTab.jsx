@@ -2,15 +2,11 @@ import { FolderOpen, Calendar, Eye, Download, FileText } from 'lucide-react';
 import { useState } from 'react';
 
 export default function BoletasTab({ data }) {
-  const [anioActivo, setAnioActivo] = useState(new Date().getFullYear().toString());
+  const [anioActivo, setAnioActivo] = useState(null);
 
-  // Datos simulados si la data real viene vacía
-  const boletas = data?.boletas || [
-    { fileId: '123', mes: 'ENERO', anio: '2024', descripcion: 'Boleta Ene 2024' },
-    { fileId: '124', mes: 'FEBRERO', anio: '2024', descripcion: 'Boleta Feb 2024' },
-    { fileId: '125', mes: 'MARZO', anio: '2024', descripcion: 'Boleta Mar 2024' },
-    { fileId: '120', mes: 'DICIEMBRE', anio: '2023', descripcion: 'Boleta Dic 2023' }
-  ];
+  // Garantizar que boletas sea un array, nunca un objeto o undefined
+  const rawBoletas = data?.boletas;
+  const boletas = Array.isArray(rawBoletas) ? rawBoletas : [];
 
   if (!boletas || boletas.length === 0) {
     return (
@@ -30,7 +26,10 @@ export default function BoletasTab({ data }) {
   });
   
   const anios = Object.keys(porAnio).sort((a, b) => Number(b) - Number(a));
-  const itemsMostrar = porAnio[anioActivo] || [];
+  
+  // Usar el primer año disponible si no hay selección
+  const anioReal = (anioActivo && porAnio[anioActivo]) ? anioActivo : anios[0];
+  const itemsMostrar = porAnio[anioReal] || [];
 
   const mesesIconos = { 
     'ENERO': '❄️', 'FEBRERO': '💝', 'MARZO': '🌼', 'ABRIL': '🌧️', 'MAYO': '🌹', 
@@ -65,8 +64,8 @@ export default function BoletasTab({ data }) {
               style={{
                 flex: 1,
                 minWidth: '80px',
-                background: a === anioActivo ? 'var(--primary-bank)' : 'transparent',
-                color: a === anioActivo ? 'white' : '#64748b',
+                background: a === anioReal ? 'var(--primary-bank)' : 'transparent',
+                color: a === anioReal ? 'white' : '#64748b',
                 border: 'none',
                 padding: '8px 16px',
                 borderRadius: '8px',
