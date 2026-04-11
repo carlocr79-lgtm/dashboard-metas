@@ -12,67 +12,71 @@ export default function Header({ userData, isSyncing, lastSync, onSync }) {
     <header className="glass-header" style={{ marginBottom: '16px' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
         <div style={{
-          width: '64px', height: '64px', borderRadius: '50%',
+          width: '54px', height: '54px', borderRadius: '50%',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
-          fontSize: '28px', color: 'white', background: 'var(--primary-bank)',
-          boxShadow: '0 4px 12px rgba(0, 0, 0, 0.1)', border: '3px solid white'
+          fontSize: '22px', color: 'white', background: 'var(--primary-bank)',
+          boxShadow: '0 4px 10px rgba(0, 45, 114, 0.15)', border: '2px solid white'
         }}>
           {initials}
         </div>
         <div>
-          <h3 style={{ margin: 0, fontWeight: 800, color: 'var(--primary-bank)', fontSize: '1.4rem' }}>
+          <h3 style={{ margin: 0, fontWeight: 800, color: 'var(--primary-bank)', fontSize: '1.2rem', display: 'flex', alignItems: 'baseline', flexWrap: 'wrap', gap: '8px' }}>
             Hola, {firstName}
-            <span style={{ color: '#475569', fontSize: '0.9rem', marginLeft: '8px', fontWeight: 500, display: 'inline-block' }}>
-              Bienvenido al Centro de Control
-            </span>
           </h3>
+          <div style={{ fontSize: '0.8rem', color: '#64748b', fontWeight: 500, marginTop: '2px' }}>
+            Bienvenido al Centro de Control
+          </div>
           <div style={{ display: 'flex', gap: '8px', alignItems: 'center', color: '#475569', fontSize: '0.85rem', fontWeight: 600, marginTop: '8px', flexWrap: 'wrap' }}>
-             <span style={{ display: 'flex', alignItems: 'center' }}>
-               <BadgeInfo size={16} color="var(--primary-bank)" style={{marginRight: 4}}/> 
+             <span style={{ display: 'flex', alignItems: 'center', background: '#f1f5f9', padding: '3px 8px', borderRadius: '6px', border: '1px solid #e2e8f0' }}>
+               <BadgeInfo size={14} color="var(--primary-bank)" style={{marginRight: 4}}/> 
                {userData.codigo || "EJECUTIVO"}
              </span>
-             <span style={{ background: '#f8fafc', padding: '4px 8px', borderRadius: '8px', display: 'flex', alignItems: 'center', border: '1px solid #e2e8f0' }}>
-               <Star size={14} fill="#f59e0b" color="#f59e0b" style={{marginRight: 4}}/> 
+             <span style={{ display: 'flex', alignItems: 'center', background: '#fefce8', padding: '3px 8px', borderRadius: '6px', border: '1px solid #fef08a' }}>
+               <Star size={12} fill="#eab308" color="#eab308" style={{marginRight: 4}}/> 
                {userData.categoria || "N/A"}
              </span>
-             <span style={{ background: '#f8fafc', padding: '4px 8px', borderRadius: '8px', display: 'flex', alignItems: 'center', border: '1px solid #e2e8f0' }}>
-               <Building2 size={14} color="#0ea5e9" style={{marginRight: 4}}/> 
+             <span style={{ display: 'flex', alignItems: 'center', background: '#f0f9ff', padding: '3px 8px', borderRadius: '6px', border: '1px solid #e0f2fe' }}>
+               <Building2 size={12} color="#0284c7" style={{marginRight: 4}}/> 
                {userData.oficina || "OFICINA"}
              </span>
           </div>
         </div>
       </div>
-      <div style={{ display: 'flex', alignItems: 'flex-end', flexDirection: 'column', justifyContent: 'center' }}>
-         <div style={{ color: 'var(--text-muted)', fontWeight: 'bold', fontSize: '0.75rem', marginBottom: '4px', display: 'flex', alignItems: 'center' }}>
-            <Clock size={12} style={{marginRight: 4}}/> ACTUALIZACIÓN MANUAL
-         </div>
+      <div style={{ display: 'flex', alignItems: 'center' }}>
          <button 
            onClick={onSync}
            disabled={isSyncing}
            style={{ 
-             background: isSyncing ? '#dbeafe' : '#f8fafc', 
-             color: '#2563eb', 
+             background: isSyncing ? '#f1f5f9' : 'transparent', 
+             color: isSyncing ? '#94a3b8' : '#64748b', 
              padding: '6px 12px', 
-             borderRadius: '20px', 
-             fontWeight: 800, 
+             borderRadius: '8px', 
+             fontWeight: 600, 
              fontSize: '0.75rem', 
              display: 'flex', 
              alignItems: 'center',
-             border: '1px solid #bfdbfe',
+             border: '1px solid',
+             borderColor: isSyncing ? '#e2e8f0' : 'transparent',
              cursor: isSyncing ? 'not-allowed' : 'pointer',
              transition: 'all 0.2s',
-             boxShadow: '0 2px 4px rgba(37, 99, 235, 0.1)',
-             opacity: isSyncing ? 0.7 : 1
            }}
            onMouseEnter={(e) => {
-             if (!isSyncing) e.currentTarget.style.background = '#eff6ff';
+             if (!isSyncing) {
+               e.currentTarget.style.background = '#f8fafc';
+               e.currentTarget.style.borderColor = '#e2e8f0';
+               e.currentTarget.style.color = '#334155';
+             }
            }}
            onMouseLeave={(e) => {
-             if (!isSyncing) e.currentTarget.style.background = '#f8fafc';
+             if (!isSyncing) {
+               e.currentTarget.style.background = 'transparent';
+               e.currentTarget.style.borderColor = 'transparent';
+               e.currentTarget.style.color = '#64748b';
+             }
            }}
          >
-            <RefreshCw size={14} className={isSyncing ? "spin-anim" : ""} style={{marginRight: 6}}/> 
-            {isSyncing ? 'Sincronizando...' : `Refrescar (${lastSync})`}
+            <RefreshCw size={14} className={isSyncing ? "spin-anim" : ""} style={{marginRight: 6}} /> 
+            {isSyncing ? 'Sincronizando...' : `Actualizado: ${lastSync}`}
          </button>
       </div>
     </header>
