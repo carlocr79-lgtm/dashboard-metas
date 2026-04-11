@@ -1,4 +1,4 @@
-import { ShieldAlert, FileSignature, Coins, Trophy, AlertTriangle, CheckCircle, Info, Medal, Clock } from 'lucide-react';
+import { ShieldAlert, FileSignature, Coins, Trophy, AlertTriangle, CheckCircle, Info, Clock, Bell, XCircle, BarChart3, FileText } from 'lucide-react';
 
 export default function HomeTab({ data }) {
   if (!data) return null;
@@ -57,6 +57,52 @@ export default function HomeTab({ data }) {
   const bonos = data.bonos;
   const estadoMoraStr = (bonos && bonos.estadoMora) ? bonos.estadoMora.toLowerCase() : '';
   const comisiona = estadoMoraStr.includes('comisiona') && !estadoMoraStr.includes('no comisiona');
+
+  // ═══ ALERTAS DINÁMICAS ═══
+  const alertas = [];
+
+  // Alerta de mora
+  if (moraVal > 3.5) {
+    alertas.push({ tipo: 'danger', Icon: AlertTriangle, texto: `⚠️ Tu mora (${data.m1}) está en nivel Crítico. Requiere atención inmediata.` });
+  } else if (moraVal > 2.5) {
+    alertas.push({ tipo: 'warning', Icon: AlertTriangle, texto: `Tu mora (${data.m1}) está en Riesgo. Trabaja en reducirla.` });
+  } else if (moraVal > 0) {
+    alertas.push({ tipo: 'success', Icon: CheckCircle, texto: `Mora (${data.m1}) en nivel Saludable. ¡Buen trabajo!` });
+  }
+
+  // Alerta de campaña
+  if (activas.length > 0) {
+    const camp = activas[0];
+    if (camp.miPuesto === 1) {
+      alertas.push({ tipo: 'success', Icon: Trophy, texto: `🥇 ¡Eres el 1° lugar en "${camp.name}"! ¡Sigue así!` });
+    } else if (camp.miPuesto > 0 && camp.miPuesto <= 3) {
+      alertas.push({ tipo: 'info', Icon: Trophy, texto: `Estás en el ${camp.miPuesto}° lugar en "${camp.name}". ¡Puedes subir!` });
+    } else if (camp.miPuesto === 0) {
+      alertas.push({ tipo: 'warning', Icon: Clock, texto: `No clasificas en "${camp.name}". Revisa los requisitos.` });
+    }
+  }
+
+  // Alerta de operaciones
+  if (opsPct < 60) {
+    alertas.push({ tipo: 'danger', Icon: BarChart3, texto: `Operaciones al ${opsPct}%. Necesitas acelerar para llegar a la meta.` });
+  } else if (opsPct < 80) {
+    alertas.push({ tipo: 'warning', Icon: BarChart3, texto: `Operaciones al ${opsPct}%. Vas en camino pero puedes mejorar.` });
+  }
+
+  // Alerta de bonos
+  if (bonos && bonos.estadoMora.toLowerCase().includes('no comisiona')) {
+    alertas.push({ tipo: 'danger', Icon: XCircle, texto: `No comisionas este periodo por mora. Bonos en S/.0.00.` });
+  }
+
+  // Alerta de boletas
+  if (data.boletas && Array.isArray(data.boletas) && data.boletas.length > 0) {
+    alertas.push({ tipo: 'info', Icon: FileText, texto: `📄 Última boleta disponible: ${data.boletas[0].descripcion}` });
+  }
+
+  // Si no hay alertas
+  if (alertas.length === 0) {
+    alertas.push({ tipo: 'info', Icon: Info, texto: 'Todo al día. No hay alertas pendientes.' });
+  }
 
   return (
     <div className="home-tab-wrapper" style={{ animation: 'fadeIn 0.5s ease-out' }}>
@@ -121,37 +167,51 @@ export default function HomeTab({ data }) {
 
       </div>
 
-      {/* SECCIÓN INFERIOR: RESUMEN DE BONOS Y ALERTAS */}
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '16px', '@media (min-width: 768px)': { gridTemplateColumns: '1fr 1fr' } }}>
-        
-        {/* RESUMEN BONOS */}
-        <div className="glass-card">
-           <h5 style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--primary-bank)', borderBottom: '1px solid var(--glass-border)', paddingBottom: '8px', marginBottom: '12px' }}>
-             PROYECCIÓN DE BONOS
-           </h5>
-           {bonos ? (
-             <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'space-between' }}>
-               <div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700 }}>Mensual</div>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 900, color: 'var(--accent-bank)' }}>{bonos.bonoMensualTotal || 'S/.0.00'}</div>
-               </div>
-               <div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700 }}>Trimestral</div>
-                  <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#166534' }}>{bonos.bonoTrimestralTotal || 'S/.0.00'}</div>
-               </div>
-               <div>
-                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700 }}>Filtro de Mora</div>
-                  <div style={{ fontSize: '0.85rem', fontWeight: 800, color: comisiona ? '#166534' : '#991b1b', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                    {comisiona ? <CheckCircle size={14}/> : <AlertTriangle size={14}/>} {bonos.estadoMora}
-                  </div>
-               </div>
-             </div>
-           ) : (
-             <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>No hay datos de bonos disponibles.</div>
-           )}
-        </div>
-
+      {/* RESUMEN BONOS */}
+      <div className="glass-card">
+        <h5 style={{ fontSize: '0.95rem', fontWeight: 800, color: 'var(--primary-bank)', borderBottom: '1px solid var(--glass-border)', paddingBottom: '8px', marginBottom: '12px' }}>
+          PROYECCIÓN DE BONOS
+        </h5>
+        {bonos ? (
+          <div style={{ display: 'flex', gap: '16px', flexWrap: 'wrap', justifyContent: 'space-between' }}>
+            <div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700 }}>Mensual</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 900, color: 'var(--accent-bank)' }}>{bonos.bonoMensualTotal || 'S/.0.00'}</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700 }}>Trimestral</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#166534' }}>{bonos.bonoTrimestralTotal || 'S/.0.00'}</div>
+            </div>
+            <div>
+              <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700 }}>Filtro de Mora</div>
+              <div style={{ fontSize: '0.85rem', fontWeight: 800, color: comisiona ? '#166534' : '#991b1b', display: 'flex', alignItems: 'center', gap: '4px' }}>
+                {comisiona ? <CheckCircle size={14}/> : <AlertTriangle size={14}/>} {bonos.estadoMora}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div style={{ color: 'var(--text-muted)', fontSize: '0.85rem' }}>No hay datos de bonos disponibles.</div>
+        )}
       </div>
+
+      {/* ALERTAS DINÁMICAS */}
+      <div className="glass-card" style={{ padding: '12px 16px' }}>
+        <h5 style={{ fontSize: '0.85rem', marginBottom: '8px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>
+          <Bell size={16} color="#f59e0b" /> ALERTAS
+        </h5>
+        <div>
+          {alertas.map((a, i) => {
+            const AlertIcon = a.Icon;
+            return (
+              <div key={i} className={`alerta-item alerta-${a.tipo}`}>
+                <AlertIcon size={16} />
+                <span>{a.texto}</span>
+              </div>
+            );
+          })}
+        </div>
+      </div>
+
     </div>
   );
 }

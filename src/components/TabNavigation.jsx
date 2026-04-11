@@ -1,11 +1,12 @@
-import { Home, Users, Flag, FileText } from 'lucide-react';
+import { Home, Target, Megaphone, DollarSign, FileText } from 'lucide-react';
 
 export default function TabNavigation({ activeTab, setActiveTab }) {
   const tabs = [
     { id: 'inicio', label: 'Inicio', icon: Home },
-    { id: 'general', label: 'General', icon: Users },
-    { id: 'campana', label: 'Campaña', icon: Flag },
-    { id: 'bonos', label: 'Boletas', icon: FileText }
+    { id: 'metas', label: 'Metas', icon: Target },
+    { id: 'campana', label: 'Campañas', icon: Megaphone },
+    { id: 'bonos', label: 'Bonos', icon: DollarSign },
+    { id: 'boletas', label: 'Boletas', icon: FileText }
   ];
 
   return (
@@ -15,7 +16,7 @@ export default function TabNavigation({ activeTab, setActiveTab }) {
         padding: '5px',
         borderRadius: '12px',
         display: 'flex',
-        gap: '8px',
+        gap: '4px',
         width: '100%',
         boxShadow: '0 4px 15px rgba(0, 45, 114, 0.05)',
         border: '1px solid rgba(0, 45, 114, 0.08)'
@@ -32,13 +33,13 @@ export default function TabNavigation({ activeTab, setActiveTab }) {
                 display: 'flex',
                 alignItems: 'center',
                 justifyContent: 'center',
-                gap: '8px',
+                gap: '6px',
                 background: isActive ? 'var(--primary-bank)' : '#f1f5f9',
                 color: isActive ? 'white' : '#64748b',
                 border: '1px solid transparent',
-                padding: '10px 20px',
+                padding: '10px 12px',
                 borderRadius: '10px',
-                fontSize: '0.95rem',
+                fontSize: '0.82rem',
                 fontWeight: 700,
                 cursor: 'pointer',
                 transition: 'all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1)',
@@ -46,7 +47,7 @@ export default function TabNavigation({ activeTab, setActiveTab }) {
                 transform: isActive ? 'scale(1.02)' : 'scale(1)'
               }}
             >
-              <Icon size={18} />
+              <Icon size={16} />
               <span className="hide-on-mobile">{tab.label}</span>
             </button>
           );
