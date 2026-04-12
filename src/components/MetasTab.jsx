@@ -150,6 +150,12 @@ function BonosModal({ bonos, data, onClose, mode }) {
     if (t.includes('saludable') || t.includes('excelente') || t.includes('bien') || t.includes('cumple')) cls = 'badge-soft-success';
     else if (t.includes('crítico') || t.includes('mal') || t.includes('no cumple')) cls = 'badge-soft-danger';
     else if (t.includes('riesgo')) cls = 'badge-soft-warning';
+    
+    // Si contiene emoji, asignarlo según el emoji (parche visual)
+    if (t.includes('✅')) cls = 'badge-soft-success';
+    else if (t.includes('⚠️')) cls = 'badge-soft-warning';
+    else if (t.includes('❌') || t.includes('🚫')) cls = 'badge-soft-danger';
+
     const num = parseFloat(t.replace('%', '').replace(',', '.'));
     if (!isNaN(num)) {
       if (num >= 100) cls = 'badge-soft-success';
@@ -157,6 +163,14 @@ function BonosModal({ bonos, data, onClose, mode }) {
       else cls = 'badge-soft-danger';
     }
     return <span className={`badge-premium ${cls}`}>{val}</span>;
+  };
+
+  const getIconForAvance = (avance) => {
+    const num = parseFloat((avance || '').toString().replace('%', '').replace(',', '.'));
+    if (isNaN(num)) return "-";
+    if (num >= 100) return "✅";
+    if (num >= 80) return "⚠️";
+    return "❌";
   };
 
   const BonoRow = ({ label, avance, estado, bono }) => {
@@ -270,10 +284,10 @@ function BonosModal({ bonos, data, onClose, mode }) {
                     <table className="table-premium">
                       <thead><tr><th>Indicador</th><th style={{ textAlign: 'center' }}>Avance</th><th style={{ textAlign: 'center' }}>Estado</th><th style={{ textAlign: 'center' }}>Bono S/.</th></tr></thead>
                       <tbody>
-                        <BonoRow label="Tasa Promedio" avance={bonos.tasaPromedioAvance} estado={bonos.estadoTasaPromedio} bono="" />
-                        <BonoRow label="N° Operaciones" avance={bonos.nOperacionesAvance} estado={bonos.estadoOperaciones} bono="" />
-                        <BonoRow label="Clientes Nuevos" avance={bonos.clientesNuevosAvance} estado={bonos.estadoNuevos} bono="" />
-                        <BonoRow label="Clientes Activos" avance={bonos.clientesActivosAvance} estado={bonos.estadoActivos} bono="" />
+                        <BonoRow label="Tasa Promedio" avance={bonos.tasaPromedioAvance} estado={getIconForAvance(bonos.tasaPromedioAvance)} bono={bonos.estadoTasaPromedio} />
+                        <BonoRow label="N° Operaciones" avance={bonos.nOperacionesAvance} estado={getIconForAvance(bonos.nOperacionesAvance)} bono={bonos.estadoOperaciones} />
+                        <BonoRow label="Clientes Nuevos" avance={bonos.clientesNuevosAvance} estado={getIconForAvance(bonos.clientesNuevosAvance)} bono={bonos.estadoNuevos} />
+                        <BonoRow label="Clientes Activos" avance={bonos.clientesActivosAvance} estado={getIconForAvance(bonos.clientesActivosAvance)} bono={bonos.estadoActivos} />
                         <tr style={{ background: '#eff6ff' }}>
                           <td colSpan={3} style={{ fontWeight: 900, color: '#1e40af', textAlign: 'right', borderRadius: '12px 0 0 12px' }}>TOTAL INDICADORES</td>
                           <td style={{ textAlign: 'center', fontWeight: 900, fontSize: '1rem', color: '#1e40af', borderRadius: '0 12px 12px 0' }}>{bonos.totalIndicadoresMensual}</td>
