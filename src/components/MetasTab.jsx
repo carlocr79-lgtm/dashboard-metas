@@ -390,8 +390,38 @@ function BonosModal({ bonos, data, onClose, mode }) {
   );
 }
 
-// ═══ COMPONENTE FILA ENRIQUECIDA (PREMIUM ENRICHED ROW) ═══
-function EnrichedRow({ item }) {
+// ═══ COMPONENTE MEDIO CÍRCULO (SPEEDOMETER) ═══
+function SemiCircleGauge({ value, color }) {
+  const pctStr = (value || '0').toString().replace('%', '').replace(',', '.');
+  const pctNum = parseFloat(pctStr) || 0;
+  const pctClamped = Math.min(Math.max(pctNum, 0), 100);
+  
+  const r = 36;
+  const circum = Math.PI * r; 
+  
+  const [offset, setOffset] = useState(circum);
+  useEffect(() => {
+    const timer = setTimeout(() => setOffset(circum - (pctClamped / 100) * circum), 150);
+    return () => clearTimeout(timer);
+  }, [pctClamped, circum]);
+
+  return (
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', filter: `drop-shadow(0 4px 6px ${color}15)` }}>
+      <div style={{ position: 'relative', width: '82px', height: '41px', overflow: 'hidden' }}>
+        <svg viewBox="0 0 82 41" style={{ width: '100%', height: '100%', overflow: 'visible' }}>
+          <path d="M 5,41 A 36,36 0 0,1 77,41" fill="none" stroke="#e2e8f0" strokeWidth="6" strokeLinecap="round" />
+          <path d="M 5,41 A 36,36 0 0,1 77,41" fill="none" stroke={color} strokeWidth="6" strokeLinecap="round" strokeDasharray={circum + 2} strokeDashoffset={offset} style={{ transition: 'stroke-dashoffset 1.5s cubic-bezier(0.22, 1, 0.36, 1)' }} />
+        </svg>
+      </div>
+      <div style={{ fontSize: '1rem', fontWeight: 900, color: color, marginTop: '2px', letterSpacing: '-0.5px' }}>
+         {Math.round(pctNum)}%
+      </div>
+    </div>
+  );
+}
+
+// ═══ COMPONENTE TARJETA GRID (PREMIUM ENRICHED CARD) ═══
+function EnrichedCard({ item }) {
   const Icon = item.icon || TrendingUp;
   const color = getStatusColor(item.s);
 
@@ -433,7 +463,7 @@ function EnrichedRow({ item }) {
   if (item.type === 'percent' && diff < 0) diffText = `⚠️ Debajo por ${formattedDiff}`;
 
   if (!item.m || item.m === '-' || !item.r || item.r === '-') {
-    diffText = 'Pendiente / En revisión';
+    diffText = 'Pendiente';
     diffColor = '#94a3b8';
   }
 
@@ -445,38 +475,39 @@ function EnrichedRow({ item }) {
   else if (sNum < 80) { statusText = 'Crítico'; badgeClass = 'badge-soft-danger'; }
 
   return (
-    <div className="enriched-row">
-      {/* Columna Izquierda: Icono y Nombre */}
-      <div style={{ flex: '1 1 150px', display: 'flex', alignItems: 'center', gap: '12px', minWidth: '150px' }}>
-        <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: `${color}10`, display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${color}20`, flexShrink: 0 }}>
-          <Icon size={20} color={color} />
-        </div>
-        <div>
-          <div style={{ fontWeight: 800, color: '#1e293b', fontSize: '0.85rem' }}>{item.l}</div>
-          <div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 600 }}>
-            OBJETIVO: {item.m}
+    <div className="enriched-card">
+       {/* Parte Superior: Icono, Titulo y Status */}
+       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+             <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: `${color}15`, color: color, display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${color}30` }}>
+                <Icon size={20} color={color} />
+             </div>
+             <div>
+                <div style={{ fontWeight: 800, fontSize: '0.88rem', color: '#1e293b' }}>{item.l}</div>
+                <div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Objetivo: {item.m}</div>
+             </div>
           </div>
-        </div>
-      </div>
+          <span className={`badge-premium ${badgeClass}`} style={{ fontSize: '0.58rem' }}>{statusText}</span>
+       </div>
 
-      {/* Columna Central: Real + Diferencia y Barra de Progreso */}
-      <div style={{ flex: '1 1 200px', display: 'flex', flexDirection: 'column', justifyContent: 'center', minWidth: '200px', paddingRight: '10px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
-           <span style={{ fontSize: '1.05rem', fontWeight: 900, color: color }}>{item.r}</span>
-           <span style={{ fontSize: '0.6rem', fontWeight: 800, color: diffColor, background: diffColor+'15', padding: '2px 8px', borderRadius: '8px' }}>{diffText}</span>
-        </div>
-        <div className="progress-bar-compact" style={{ height: '5px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
-            <div className="progress-bar-fill" style={{ width: `${pctReal}%`, background: color, height: '100%', transition: 'width 1s cubic-bezier(0.16, 1, 0.3, 1)' }} />
-        </div>
-      </div>
+       {/* Parte Central: Textos a la Iqz, Speedometer Derecha */}
+       <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-end', justifyContent: 'space-between', flex: 1, marginBottom: '12px' }}>
+          <div style={{ flex: 1 }}>
+             <div style={{ fontSize: '0.65rem', color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0px', letterSpacing: '0.5px' }}>ALCANZADO</div>
+             <div style={{ fontSize: '1.2rem', fontWeight: 900, color: color, lineHeight: '1.2', marginBottom: '6px' }}>{item.r}</div>
+             <div style={{ border: `1px solid ${diffColor}20`, background: diffColor+'10', display: 'inline-flex', padding: '3px 8px', borderRadius: '8px' }}>
+                <span style={{ fontSize: '0.62rem', fontWeight: 800, color: diffColor }}>{diffText}</span>
+             </div>
+          </div>
+          <div style={{ marginRight: '-4px' }}>
+             <SemiCircleGauge value={item.s} color={color} />
+          </div>
+       </div>
 
-      {/* Columna Derecha: Anillo y Status */}
-      <div style={{ width: '130px', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '10px' }}>
-         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
-            <span className={`badge-premium ${badgeClass}`}>{statusText}</span>
-         </div>
-         <GaugeRing value={item.s} color={color} />
-      </div>
+       {/* Barra de Progreso Inferior Lineal */}
+       <div style={{ marginTop: 'auto', background: '#f1f5f9', height: '6px', borderRadius: '6px', overflow: 'hidden' }}>
+          <div style={{ width: `${pctReal}%`, background: color, height: '100%', transition: 'width 1.5s cubic-bezier(0.16,1,0.3,1)' }} />
+       </div>
     </div>
   );
 }
@@ -507,10 +538,10 @@ function MensualView({ data }) {
           )}
         </div>
         
-        {/* Renderizado Premium por Tarjetas */}
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {/* Renderizado Premium Grid de Tarjetas */}
+        <div className="grid-cards-container">
           {mensualMap.map((item, i) => (
-            <EnrichedRow key={i} item={item} />
+            <EnrichedCard key={i} item={item} />
           ))}
         </div>
       </div>
@@ -541,10 +572,10 @@ function TrimestralView({ data }) {
           )}
         </div>
 
-        {/* Renderizado Premium por Tarjetas */}
-        <div style={{ display: 'flex', flexDirection: 'column' }}>
+        {/* Renderizado Premium Grid de Tarjetas */}
+        <div className="grid-cards-container">
           {trimData.map((item, i) => (
-            <EnrichedRow key={i} item={item} />
+            <EnrichedCard key={i} item={item} />
           ))}
         </div>
       </div>
@@ -736,25 +767,26 @@ export default function MetasTab({ data }) {
   return (
     <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
       <style>{`
-        .enriched-row {
-          display: flex;
-          flex-wrap: wrap;
-          align-items: center;
-          background: rgba(255, 255, 255, 0.45);
-          border: 1px solid #e2e8f0;
-          border-radius: 12px;
-          padding: 12px 16px;
-          margin-bottom: 10px;
-          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        .grid-cards-container {
+          display: grid;
+          grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+          gap: 16px;
         }
-        .enriched-row:hover {
+        .enriched-card {
+          background: rgba(255, 255, 255, 0.65);
+          border: 1px solid #e2e8f0;
+          border-radius: 16px;
+          padding: 18px 20px;
+          display: flex;
+          flex-direction: column;
+          box-shadow: 0 4px 12px rgba(0,0,0,0.02);
+          transition: all 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .enriched-card:hover {
           background: #ffffff;
           border-color: #cbd5e1;
-          box-shadow: 0 4px 16px rgba(0, 45, 114, 0.06);
-          transform: translateY(-2px);
-        }
-        .enriched-row:last-child {
-          margin-bottom: 0;
+          box-shadow: 0 16px 32px -4px rgba(0, 45, 114, 0.08);
+          transform: translateY(-4px);
         }
       `}</style>
       {/* Sub-navegación */}
