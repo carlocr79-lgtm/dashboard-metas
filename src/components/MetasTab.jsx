@@ -579,7 +579,7 @@ function TrimestralView({ data }) {
           <h5 style={{ fontWeight: 800, margin: 0, fontSize: '1rem', color: '#002d72' }}>Análisis Trimestral</h5>
           {bonos && (
             <button onClick={() => setShowBonos(true)} className="btn-ver-bonos-compact">
-              <Eye size={14} /> Ver Bonos Trimestrales
+              <Eye size={14} /> Ver Bonos
             </button>
           )}
         </div>
@@ -805,18 +805,42 @@ export default function MetasTab({ data }) {
           font-size: 0.72rem !important;
           border-radius: 8px !important;
         }
-        .sub-nav-btn {
-          padding: 6px 14px !important;
-          font-size: 0.75rem !important;
-          gap: 6px !important;
-          border-radius: 8px !important;
-        }
         .sub-nav-wrapper {
-          gap: 6px !important;
+          display: inline-flex !important;
+          background: rgba(241, 245, 249, 0.6) !important;
+          border-radius: 12px !important;
+          padding: 4px !important;
+          border: 1px solid rgba(226, 232, 240, 0.8) !important;
+          gap: 2px !important;
+          box-shadow: inset 0 2px 4px rgba(0,0,0,0.02) !important;
+          margin: 0 auto;
+        }
+        .sub-nav-btn {
+          flex: 0 1 auto !important;
+          background: transparent !important;
+          color: #64748b !important;
+          border: none !important;
+          font-weight: 700 !important;
+          padding: 6px 20px !important;
+          border-radius: 8px !important;
+          font-size: 0.78rem !important;
+          transition: all 0.25s ease !important;
+          display: inline-flex;
+          align-items: center;
+          justify-content: center;
+        }
+        .sub-nav-btn.active {
+          background: #ffffff !important;
+          color: #0f172a !important;
+          box-shadow: 0 2px 6px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04) !important;
+        }
+        .sub-nav-btn:hover:not(.active) {
+          background: rgba(255,255,255,0.4) !important;
+          color: #334155 !important;
         }
       `}</style>
       {/* Sub-navegación */}
-      <div className="glass-card" style={{ padding: '8px 12px' }}>
+      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '14px', marginTop: '4px' }}>
         <div className="sub-nav-wrapper">
           <button className={`sub-nav-btn${subView === 'mensual' ? ' active' : ''}`} onClick={() => setSubView('mensual')}>
             <Calendar size={14} /> Mensual
