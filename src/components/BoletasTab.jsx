@@ -1,4 +1,4 @@
-import { FolderOpen, Calendar, Eye, Download, FileText, Loader2 } from 'lucide-react';
+import { FolderOpen, Calendar, Eye, Download, FileText, Loader2, FileSignature } from 'lucide-react';
 import { useState } from 'react';
 import { callGAS } from '../services/api';
 
@@ -46,10 +46,11 @@ export default function BoletasTab({ data }) {
   const anioReal = (anioActivo && porAnio[anioActivo]) ? anioActivo : anios[0];
   const itemsMostrar = porAnio[anioReal] || [];
 
-  const mesesIconos = { 
-    'ENERO': '❄️', 'FEBRERO': '💝', 'MARZO': '🌼', 'ABRIL': '🌧️', 'MAYO': '🌹', 
-    'JUNIO': '☀️', 'JULIO': '🇵🇪', 'AGOSTO': '🍃', 'SEPTIEMBRE': '🍂', 'OCTUBRE': '🎃', 
-    'NOVIEMBRE': '🧑‍🌾', 'DICIEMBRE': '🎄' 
+  // Meses orden para extraer número si lo necesitamos (opcional)
+  const mesesOrden = { 
+    'ENERO': '01', 'FEBRERO': '02', 'MARZO': '03', 'ABRIL': '04', 'MAYO': '05', 
+    'JUNIO': '06', 'JULIO': '07', 'AGOSTO': '08', 'SEPTIEMBRE': '09', 'OCTUBRE': '10', 
+    'NOVIEMBRE': '11', 'DICIEMBRE': '12' 
   };
 
   // ═══ DESCARGA REAL ═══
@@ -124,19 +125,28 @@ export default function BoletasTab({ data }) {
         {/* Grid de Boletas */}
         <div style={{ display: 'grid', gridTemplateColumns: 'repeat(2, 1fr)', gap: '6px' }}>
           {itemsMostrar.map((b, i) => {
-            const icono = mesesIconos[b.mes] || '📄';
+            const numMes = mesesOrden[b.mes] || '📄';
             const mesCorto = b.mes.charAt(0) + b.mes.slice(1).toLowerCase();
             const isLoadingDownload = loadingId === 'download-' + b.fileId;
             const isLoadingView = loadingId === 'view-' + b.fileId;
 
             return (
               <div key={i} style={{ 
-                background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: '12px', padding: '12px', 
-                display: 'flex', alignItems: 'center', gap: '8px', boxShadow: 'var(--shadow-premium), var(--shadow-inner)',
+                background: 'var(--glass-bg)', border: '1px solid var(--glass-border)', borderRadius: '12px', padding: '10px 12px', 
+                display: 'flex', alignItems: 'center', gap: '10px', boxShadow: 'var(--shadow-premium), var(--shadow-inner)',
                 transition: 'all 0.3s ease'
               }}>
-                <span style={{ fontSize: '1.2rem' }}>{icono}</span>
-                <div style={{ flex: 1, fontWeight: 700, fontSize: '0.8rem', color: 'var(--primary-bank)' }}>{mesCorto}</div>
+                <div style={{
+                  width: '34px', height: '34px', borderRadius: '10px', 
+                  background: 'linear-gradient(135deg, #eff6ff, #dbeafe)', border: '1px solid #bfdbfe',
+                  display: 'flex', alignItems: 'center', justifyContent: 'center', color: '#1e40af'
+                }}>
+                  <FileSignature size={16} />
+                </div>
+                <div style={{ flex: 1 }}>
+                   <div style={{ fontWeight: 800, fontSize: '0.85rem', color: 'var(--primary-bank)' }}>{mesCorto}</div>
+                   <div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 700 }}>Boleta {numMes}/{b.anio}</div>
+                </div>
                 <div style={{ display: 'flex', gap: '4px' }}>
                   <button 
                     onClick={() => verBoleta(b.fileId)} 
