@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Calendar, TrendingUp, Users, ShieldAlert, Coins, ChevronDown, ChevronUp, Building2, Loader2 } from 'lucide-react';
+import { Calendar, TrendingUp, Users, ShieldAlert, Coins, ChevronDown, ChevronUp, Building2, Loader2, DollarSign, X, CheckCircle, XCircle, BarChart3, ClipboardList, CalendarCheck } from 'lucide-react';
 import { callGAS } from '../services/api';
 
 // ═══ HELPERS ═══
@@ -133,10 +133,166 @@ function IndicatorBadge({ icon: Icon, label, situation, sitColor, meta, real, re
   );
 }
 
+// ═══ MODAL DE BONOS PREMIUM ═══
+function BonosModal({ bonos, onClose }) {
+  if (!bonos) return null;
+
+  const comisiona = bonos.estadoMora && bonos.estadoMora.toLowerCase().includes('comisiona') && !bonos.estadoMora.toLowerCase().includes('no comisiona');
+
+  // Helper local para badge
+  const fBadge = (val) => {
+    const t = (val || '').toString().toLowerCase();
+    let cls = 'badge-soft-neutral';
+    if (t.includes('saludable') || t.includes('excelente') || t.includes('bien') || t.includes('cumple')) cls = 'badge-soft-success';
+    else if (t.includes('crítico') || t.includes('mal') || t.includes('no cumple')) cls = 'badge-soft-danger';
+    else if (t.includes('riesgo')) cls = 'badge-soft-warning';
+    const num = parseFloat(t.replace('%', '').replace(',', '.'));
+    if (!isNaN(num)) {
+      if (num >= 100) cls = 'badge-soft-success';
+      else if (num >= 80) cls = 'badge-soft-warning';
+      else cls = 'badge-soft-danger';
+    }
+    return <span className={`badge-premium ${cls}`}>{val}</span>;
+  };
+
+  const BonoRow = ({ label, avance, estado, bono }) => {
+    const bonoDisplay = bono || '';
+    const bonoColor = bonoDisplay && bonoDisplay !== 'S/.0.00' ? '#002d72' : '#94a3b8';
+    return (
+      <tr>
+        <td>{label}</td>
+        <td className="metric-val" style={{ textAlign: 'center' }}>{avance || '-'}</td>
+        <td style={{ textAlign: 'center' }}>{estado ? fBadge(estado) : (avance ? fBadge(avance) : <span style={{ color: 'var(--text-muted)' }}>-</span>)}</td>
+        <td style={{ textAlign: 'center', fontWeight: 800, color: bonoColor }}>{bonoDisplay}</td>
+      </tr>
+    );
+  };
+
+  return (
+    <div className="modal-overlay" onClick={onClose}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+        {/* Header del Modal */}
+        <div className="modal-header">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--grad-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <DollarSign size={20} color="white" />
+            </div>
+            <div>
+              <h4 style={{ margin: 0, fontWeight: 900, color: 'var(--primary-bank)', fontSize: '1.05rem' }}>Detalle de Bonos</h4>
+              <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 600 }}>Desglose completo de comisiones</div>
+            </div>
+          </div>
+          <button onClick={onClose} className="modal-close-btn">
+            <X size={18} />
+          </button>
+        </div>
+
+        {/* Estado de Mora */}
+        <div style={{
+          background: comisiona ? '#eff6ff' : '#fef2f2',
+          border: `1px solid ${comisiona ? '#bfdbfe' : '#fecaca'}`,
+          borderRadius: '10px', padding: '10px 16px', marginBottom: '16px',
+          display: 'flex', alignItems: 'center', gap: '10px'
+        }}>
+          {comisiona ? <CheckCircle size={16} color="#002d72" /> : <XCircle size={16} color="#da291c" />}
+          <span style={{ fontWeight: 800, color: comisiona ? '#002d72' : '#da291c', fontSize: '0.82rem' }}>
+            Mora: {bonos.moraReal} — {bonos.estadoMora}
+          </span>
+        </div>
+
+        {!comisiona ? (
+          <div style={{ textAlign: 'center', padding: '20px 0', color: '#9ca3af', fontSize: '0.85rem' }}>
+            La mora actual excede el límite para comisionar. Trabaja en reducirla. 💪
+          </div>
+        ) : (
+          <>
+            {/* Resumen Cards */}
+            <div className="bonos-grid-cards" style={{ marginBottom: '16px' }}>
+              <div className="bonos-card-item bonos-card-mensual">
+                <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#1e40af', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>Bono Mensual</div>
+                <div className="bonos-monto" style={{ fontSize: '1.2rem' }}>{bonos.bonoMensualTotal}</div>
+              </div>
+              <div className="bonos-card-item bonos-card-trimestral">
+                <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#1e40af', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>Bono Trimestral</div>
+                <div className="bonos-monto" style={{ fontSize: '1.2rem', background: 'var(--grad-primary)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{bonos.bonoTrimestralTotal}</div>
+              </div>
+            </div>
+
+            {/* PRODUCTIVIDAD MENSUAL */}
+            <div style={{ marginBottom: '14px' }}>
+              <h6 style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--primary-bank)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <BarChart3 size={14} /> PRODUCTIVIDAD MENSUAL
+              </h6>
+              <div style={{ overflowX: 'auto' }}>
+                <table className="table-premium">
+                  <thead><tr><th>Indicador</th><th style={{ textAlign: 'center' }}>Avance</th><th style={{ textAlign: 'center' }}>Estado</th><th style={{ textAlign: 'center' }}>Bono S/.</th></tr></thead>
+                  <tbody>
+                    <BonoRow label="Saldo Mínimo" avance={bonos.saldoMinimoAvance} estado={bonos.estadoSaldoMinimo} bono="" />
+                    <BonoRow label="Saldo Mensual" avance={bonos.saldoMensualAvance} estado={bonos.estadoSaldoMensual} bono={bonos.bonoSaldoMensual} />
+                    <BonoRow label="Colocación Mensual" avance={bonos.colocacionMensualAvance} estado={bonos.estadoColocacionMensual} bono={bonos.bonoColocacionMensual} />
+                    <tr style={{ background: '#eff6ff' }}>
+                      <td colSpan={3} style={{ fontWeight: 900, color: '#1e40af', textAlign: 'right', borderRadius: '12px 0 0 12px' }}>TOTAL PRODUCTIVIDAD</td>
+                      <td style={{ textAlign: 'center', fontWeight: 900, fontSize: '1rem', color: '#1e40af', borderRadius: '0 12px 12px 0' }}>{bonos.totalProductividadMensual}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* INDICADORES MENSUAL */}
+            <div style={{ marginBottom: '14px' }}>
+              <h6 style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--primary-bank)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <ClipboardList size={14} /> INDICADORES MENSUAL
+              </h6>
+              <div style={{ overflowX: 'auto' }}>
+                <table className="table-premium">
+                  <thead><tr><th>Indicador</th><th style={{ textAlign: 'center' }}>Avance</th><th style={{ textAlign: 'center' }}>Estado</th><th style={{ textAlign: 'center' }}>Bono S/.</th></tr></thead>
+                  <tbody>
+                    <BonoRow label="Tasa Promedio" avance={bonos.tasaPromedioAvance} estado={bonos.estadoTasaPromedio} bono="" />
+                    <BonoRow label="N° Operaciones" avance={bonos.nOperacionesAvance} estado={bonos.estadoOperaciones} bono="" />
+                    <BonoRow label="Clientes Nuevos" avance={bonos.clientesNuevosAvance} estado={bonos.estadoNuevos} bono="" />
+                    <BonoRow label="Clientes Activos" avance={bonos.clientesActivosAvance} estado={bonos.estadoActivos} bono="" />
+                    <tr style={{ background: '#eff6ff' }}>
+                      <td colSpan={3} style={{ fontWeight: 900, color: '#1e40af', textAlign: 'right', borderRadius: '12px 0 0 12px' }}>TOTAL INDICADORES</td>
+                      <td style={{ textAlign: 'center', fontWeight: 900, fontSize: '1rem', color: '#1e40af', borderRadius: '0 12px 12px 0' }}>{bonos.totalIndicadoresMensual}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            {/* PRODUCTIVIDAD TRIMESTRAL */}
+            <div>
+              <h6 style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--primary-bank)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <CalendarCheck size={14} /> PRODUCTIVIDAD TRIMESTRAL
+              </h6>
+              <div style={{ overflowX: 'auto' }}>
+                <table className="table-premium">
+                  <thead><tr><th>Indicador</th><th style={{ textAlign: 'center' }}>Avance</th><th style={{ textAlign: 'center' }}>Estado</th><th style={{ textAlign: 'center' }}>Bono S/.</th></tr></thead>
+                  <tbody>
+                    <BonoRow label="Saldo Trimestral" avance={bonos.saldoTrimestralAvance} estado={bonos.estadoSaldoTrim} bono="" />
+                    <BonoRow label="Colocación Trimestral" avance={bonos.colocacionTrimestralAvance} estado={bonos.estadoColocTrim} bono="" />
+                    <tr style={{ background: '#eff6ff' }}>
+                      <td colSpan={3} style={{ fontWeight: 900, color: '#1e40af', textAlign: 'right', borderRadius: '12px 0 0 12px' }}>TOTAL TRIMESTRAL</td>
+                      <td style={{ textAlign: 'center', fontWeight: 900, fontSize: '1rem', color: '#1e40af', borderRadius: '0 12px 12px 0' }}>{bonos.bonoTrimestralTotal}</td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </>
+        )}
+      </div>
+    </div>
+  );
+}
+
 // ═══ SUB-VISTA: MENSUAL ═══
 function MensualView({ data }) {
+  const [showBonos, setShowBonos] = useState(false);
   const moraColor = getMoraColor(data.m2);
   const smColor = getStatusColor(data.sm3);
+  const bonos = data.bonos;
 
   const mensualMap = [
     { l: 'Saldo Cartera', m: data.sc1, r: data.sc2, s: data.sc3 },
@@ -184,7 +340,14 @@ function MensualView({ data }) {
             </tbody>
           </table>
         </div>
+        {/* Botón Ver Bonos */}
+        {bonos && (
+          <button onClick={() => setShowBonos(true)} className="btn-ver-bonos">
+            <DollarSign size={14} /> Ver Mis Bonos
+          </button>
+        )}
       </div>
+      {showBonos && <BonosModal bonos={bonos} onClose={() => setShowBonos(false)} />}
     </div>
   );
 }

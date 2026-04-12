@@ -1,11 +1,10 @@
-import { Home, Target, Megaphone, DollarSign, FileText } from 'lucide-react';
+import { Home, Target, Megaphone, FileText } from 'lucide-react';
 
 export default function Sidebar({ activeTab, setActiveTab }) {
   const tabs = [
     { id: 'inicio', label: 'Inicio', icon: Home },
     { id: 'metas', label: 'Metas', icon: Target },
     { id: 'campana', label: 'Campañas', icon: Megaphone },
-    { id: 'bonos', label: 'Bonos', icon: DollarSign },
     { id: 'boletas', label: 'Boletas', icon: FileText }
   ];
 

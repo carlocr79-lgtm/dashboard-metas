@@ -8,7 +8,6 @@ import Sidebar from './components/Sidebar';
 import HomeTab from './components/HomeTab';
 import MetasTab from './components/MetasTab';
 import CampaignTab from './components/CampaignTab';
-import BonosTab from './components/BonosTab';
 import BoletasTab from './components/BoletasTab';
 import LoginOTP from './components/LoginOTP';
 import ErrorBoundary from './components/ErrorBoundary';
@@ -60,7 +59,6 @@ function Dashboard({ data, userEmail, setDashboardData, onLogout }) {
             {activeTab === 'inicio' && <HomeTab data={data} />}
             {activeTab === 'metas' && <MetasTab data={data} />}
             {activeTab === 'campana' && <CampaignTab data={data} />}
-            {activeTab === 'bonos' && <BonosTab data={data} />}
             {activeTab === 'boletas' && <BoletasTab data={data} />}
           </ErrorBoundary>
         </main>
