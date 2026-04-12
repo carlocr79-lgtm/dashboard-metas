@@ -260,7 +260,7 @@ html {
 }
 
 .ej-card.admin-card {
-  border: 2px solid #7c3aed;
+  border: 2px solid #002d72;
 }
 
 .ej-card-header {
@@ -277,7 +277,7 @@ html {
 }
 
 .ej-card.admin-card .ej-card-header {
-  background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
 }
 
 .ej-detail-panel {
@@ -286,7 +286,7 @@ html {
 }
 
 .ej-card.admin-card .ej-detail-panel {
-  background: linear-gradient(135deg, #faf5ff 0%, #f3e8ff 100%);
+  background: linear-gradient(135deg, #eff6ff 0%, #dbeafe 100%);
 }
 
 .ej-detail-grid {
