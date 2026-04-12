@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Calendar, TrendingUp, Users, ShieldAlert, Coins, ChevronDown, ChevronUp, Building2, Loader2, DollarSign, X, CheckCircle, XCircle, BarChart3, ClipboardList, CalendarCheck, Eye } from 'lucide-react';
+import { Calendar, TrendingUp, Users, ShieldAlert, Coins, ChevronDown, ChevronUp, Building2, Loader2, DollarSign, X, CheckCircle, XCircle, BarChart3, ClipboardList, CalendarCheck, Eye, Wallet, Target, Percent, Hash, UserPlus, UserCheck, AlertCircle, CheckCircle2, AlertTriangle, Info } from 'lucide-react';
 import { callGAS } from '../services/api';
 
 // ═══ HELPERS ═══
@@ -78,7 +78,7 @@ function GaugeRing({ value, color }) {
         <svg viewBox="0 0 36 36" style={{ transform: 'rotate(-90deg)', width: '100%', height: '100%' }}>
           <circle cx="18" cy="18" r={r} fill="none" stroke="#f1f5f9" strokeWidth="3" />
           <circle cx="18" cy="18" r={r} fill="none" stroke={color} strokeWidth="3"
-            strokeDasharray={circum} strokeDashoffset={offset} strokeLinecap="round" 
+            strokeDasharray={circum} strokeDashoffset={offset} strokeLinecap="round"
             style={{ transition: 'stroke-dashoffset 1.2s cubic-bezier(0.22, 1, 0.36, 1)' }} />
         </svg>
         <div style={{
@@ -133,258 +133,286 @@ function IndicatorBadge({ icon: Icon, label, situation, sitColor, meta, real, re
   );
 }
 
+// ═══ COMPONENTES PREMIUM PARA BONOS ═══
+const StatusBadge = ({ status, avance }) => {
+  const t = (status || '').toString().toLowerCase();
+  let cls = 'badge-soft-neutral';
+  let Icon = AlertCircle;
+  let color = '#64748b';
+
+  if (t.includes('saludable') || t.includes('excelente') || t.includes('bien') || t.includes('cumple') || t.includes('✅')) {
+    cls = 'badge-soft-success';
+    Icon = CheckCircle2;
+    color = '#059669';
+  } else if (t.includes('crítico') || t.includes('mal') || t.includes('no cumple') || t.includes('❌') || t.includes('🚫')) {
+    cls = 'badge-soft-danger';
+    Icon = XCircle;
+    color = '#dc2626';
+  } else if (t.includes('riesgo') || t.includes('⚠️')) {
+    cls = 'badge-soft-warning';
+    Icon = AlertTriangle;
+    color = '#d97706';
+  } else {
+    const num = parseFloat((avance || '').toString().replace('%', '').replace(',', '.'));
+    if (!isNaN(num)) {
+      if (num >= 100) { cls = 'badge-soft-success'; Icon = CheckCircle2; color = '#059669'; }
+      else if (num >= 80) { cls = 'badge-soft-warning'; Icon = AlertTriangle; color = '#d97706'; }
+      else { cls = 'badge-soft-danger'; Icon = XCircle; color = '#dc2626'; }
+    }
+  }
+
+  const text = t.replace(/[✅⚠️❌🚫]/g, '').trim();
+  const displayText = text.charAt(0).toUpperCase() + text.slice(1);
+
+  return (
+    <span className={`badge-premium ${cls}`} style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', padding: '4px 10px', fontSize: '0.65rem' }}>
+      <Icon size={12} color={color} style={{ strokeWidth: 2.5 }} />
+      {displayText || (cls === 'badge-soft-success' ? 'Cumple' : cls === 'badge-soft-warning' ? 'En Riesgo' : 'No Cumple')}
+    </span>
+  );
+};
+
+const BonoItem = ({ label, avance, estado, bono, icon: Icon }) => {
+  const bonoDisplay = bono || '';
+  const hasBono = bonoDisplay && bonoDisplay !== 'S/.0.00' && bonoDisplay !== '-';
+  const bonoColor = hasBono ? '#002d72' : '#94a3b8';
+
+  return (
+    <div style={{
+      display: 'flex', alignItems: 'center', justifyContent: 'space-between',
+      padding: '12px 14px', background: '#ffffff', borderRadius: '12px',
+      border: '1px solid #e2e8f0', marginBottom: '8px',
+      boxShadow: '0 2px 8px rgba(0,0,0,0.02)', transition: 'transform 0.2s, box-shadow 0.2s',
+      cursor: 'default'
+    }}
+    onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,45,114,0.08)'; }}
+    onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.02)'; }}
+    >
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: '1.2', minWidth: '120px' }}>
+        <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--grad-neutral)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #f1f5f9' }}>
+          <Icon size={18} color="#002d72" />
+        </div>
+        <div>
+          <div style={{ fontWeight: 800, fontSize: '0.78rem', color: '#1e293b' }}>{label}</div>
+          <div style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: 600 }}>Avance: <span style={{ color: '#0f172a', fontWeight: 800 }}>{avance || '-'}</span></div>
+        </div>
+      </div>
+      
+      <div style={{ flex: '1', display: 'flex', justifyContent: 'center' }}>
+        <StatusBadge status={estado} avance={avance} />
+      </div>
+
+      <div style={{ flex: '0.8', textAlign: 'right', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '2px' }}>
+        <span style={{ fontSize: '0.58rem', fontWeight: 800, color: '#94a3b8', textTransform: 'uppercase', letterSpacing: '0.5px' }}>Bono</span>
+        <span style={{ 
+          fontWeight: 900, 
+          fontSize: hasBono ? '0.85rem' : '0.8rem', 
+          color: bonoColor,
+          background: hasBono ? '#eff6ff' : 'transparent',
+          padding: hasBono ? '2px 8px' : '0',
+          borderRadius: '6px',
+          border: hasBono ? '1px solid #dbeafe' : 'none'
+        }}>
+          {bonoDisplay || '-'}
+        </span>
+      </div>
+    </div>
+  );
+};
+
 // ═══ MODAL DE BONOS PREMIUM ═══
 function BonosModal({ bonos, data, onClose, mode }) {
   if (!bonos || !data) return null;
 
   const estadoMoraStr = (bonos.estadoMora || '').toString().toLowerCase();
-  const comisiona = estadoMoraStr.includes('✅') || estadoMoraStr.includes('comisiona') && !estadoMoraStr.includes('no comisiona');
-  const smColor = getStatusColor(data.sm3);
+  const comisiona = (estadoMoraStr.includes('✅') || estadoMoraStr.includes('comisiona')) && !estadoMoraStr.includes('no comisiona');
   const esMensual = mode === 'mensual';
-  const titulo = esMensual ? 'Bonos Mensuales' : 'Bonos Trimestrales';
-  const subtitulo = esMensual ? 'Productividad e Indicadores del mes' : 'Productividad del trimestre';
-
-  // Helper local para badge
-  const fBadge = (val) => {
-    const t = (val || '').toString().toLowerCase();
-    let cls = 'badge-soft-neutral';
-    if (t.includes('saludable') || t.includes('excelente') || t.includes('bien') || t.includes('cumple')) cls = 'badge-soft-success';
-    else if (t.includes('crítico') || t.includes('mal') || t.includes('no cumple')) cls = 'badge-soft-danger';
-    else if (t.includes('riesgo')) cls = 'badge-soft-warning';
-    
-    // Si contiene emoji, asignarlo según el emoji (parche visual)
-    if (t.includes('✅')) cls = 'badge-soft-success';
-    else if (t.includes('⚠️')) cls = 'badge-soft-warning';
-    else if (t.includes('❌') || t.includes('🚫')) cls = 'badge-soft-danger';
-
-    const num = parseFloat(t.replace('%', '').replace(',', '.'));
-    if (!isNaN(num)) {
-      if (num >= 100) cls = 'badge-soft-success';
-      else if (num >= 80) cls = 'badge-soft-warning';
-      else cls = 'badge-soft-danger';
-    }
-    return <span className={`badge-premium ${cls}`}>{val}</span>;
-  };
-
-  const getIconForAvance = (avance) => {
-    const num = parseFloat((avance || '').toString().replace('%', '').replace(',', '.'));
-    if (isNaN(num)) return "-";
-    if (num >= 100) return "✅";
-    if (num >= 80) return "⚠️";
-    return "❌";
-  };
-
-  const BonoRow = ({ label, avance, estado, bono }) => {
-    const bonoDisplay = bono || '';
-    const bonoColor = bonoDisplay && bonoDisplay !== 'S/.0.00' ? '#002d72' : '#94a3b8';
-    return (
-      <tr>
-        <td style={{ padding: '5px 8px', fontSize: '0.75rem' }}>{label}</td>
-        <td className="metric-val" style={{ textAlign: 'center', padding: '5px 8px', fontSize: '0.75rem' }}>{avance || '-'}</td>
-        <td style={{ textAlign: 'center', padding: '5px 8px' }}>{estado ? fBadge(estado) : (avance ? fBadge(avance) : <span style={{ color: 'var(--text-muted)' }}>-</span>)}</td>
-        <td style={{ textAlign: 'center', fontWeight: 800, color: bonoColor, padding: '5px 8px', fontSize: '0.78rem' }}>{bonoDisplay}</td>
-      </tr>
-    );
-  };
+  const titulo = esMensual ? 'Mis Bonos Mensuales' : 'Mis Bonos Trimestrales';
+  const subtitulo = esMensual ? 'Resumen de Productividad e Indicadores' : 'Resumen de Productividad Trimestral';
 
   return (
-    <div className="modal-overlay" onClick={onClose}>
-      <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-        {/* Header del Modal */}
-        <div className="modal-header" style={{ marginBottom: '10px', paddingBottom: '10px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--grad-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <DollarSign size={20} color="white" />
+    <div className="modal-overlay" onClick={onClose} style={{ backdropFilter: 'blur(8px)', animation: 'fadeIn 0.2s ease-out' }}>
+      <div className="modal-content" onClick={(e) => e.stopPropagation()} style={{ background: '#f8fafc', padding: 0, overflow: 'hidden', maxWidth: '520px', borderRadius: '24px', boxShadow: '0 25px 50px -12px rgba(0, 45, 114, 0.25)' }}>
+        
+        {/* Modal Header Premium */}
+        <div style={{ background: 'white', padding: '20px 24px', borderBottom: '1px solid #e2e8f0', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '14px' }}>
+            <div style={{ width: '48px', height: '48px', borderRadius: '14px', background: 'var(--grad-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: '0 8px 16px -4px rgba(0,45,114,0.3)' }}>
+              <Coins size={24} color="white" />
             </div>
             <div>
-              <h4 style={{ margin: 0, fontWeight: 900, color: 'var(--primary-bank)', fontSize: '1.05rem' }}>{titulo}</h4>
-              <div style={{ fontSize: '0.7rem', color: '#64748b', fontWeight: 600 }}>{subtitulo}</div>
+              <h4 style={{ margin: 0, fontWeight: 900, color: 'var(--primary-bank)', fontSize: '1.2rem', letterSpacing: '-0.5px' }}>{titulo}</h4>
+              <div style={{ fontSize: '0.75rem', color: '#64748b', fontWeight: 600 }}>{subtitulo}</div>
             </div>
           </div>
-          <button onClick={onClose} className="modal-close-btn">
+          <button onClick={onClose} style={{ width: '32px', height: '32px', borderRadius: '50%', background: '#f1f5f9', border: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', color: '#64748b' }}>
             <X size={18} />
           </button>
         </div>
 
-        {/* Estado de Mora */}
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '10px' }}>
+        <div style={{ padding: '24px', maxHeight: '75vh', overflowY: 'auto' }}>
+          
+          {/* Banner Mora Superior */}
           <div style={{
-            background: comisiona ? '#eff6ff' : '#fef2f2',
+            background: comisiona ? 'linear-gradient(135deg, #eff6ff, #dbeafe)' : 'linear-gradient(135deg, #fef2f2, #fee2e2)',
             border: `1px solid ${comisiona ? '#bfdbfe' : '#fecaca'}`,
-            borderRadius: '10px', padding: '8px 12px', flex: 1,
-            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', minWidth: '200px'
+            borderRadius: '16px', padding: '14px 20px', marginBottom: '20px',
+            display: 'flex', alignItems: 'center', gap: '16px',
+            boxShadow: '0 4px 12px rgba(0,0,0,0.03)'
           }}>
-            {comisiona ? <CheckCircle size={15} color="#002d72" /> : <XCircle size={15} color="#da291c" />}
-            <span style={{ fontWeight: 800, color: comisiona ? '#002d72' : '#da291c', fontSize: '0.78rem' }}>
-              Mora: {bonos.moraReal} — {bonos.estadoMora}
-            </span>
-          </div>
-        </div>
-
-        {!comisiona ? (
-          <div style={{ textAlign: 'center', padding: '20px 0', color: '#9ca3af', fontSize: '0.85rem' }}>
-            La mora actual excede el límite para comisionar. Trabaja en reducirla. 💪
-          </div>
-        ) : (
-          <>
-            {/* Card Resumen */}
             <div style={{
-              background: esMensual ? 'linear-gradient(135deg, #eff6ff, #dbeafe)' : 'linear-gradient(135deg, #f8fafc, #f1f5f9)',
-              border: `1px solid ${esMensual ? '#bfdbfe' : '#e2e8f0'}`,
-              borderRadius: '12px', padding: '10px', textAlign: 'center', marginBottom: '10px'
+              width: '44px', height: '44px', borderRadius: '12px',
+              background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
+              boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
             }}>
-              <div style={{ fontSize: '0.62rem', fontWeight: 800, color: '#1e40af', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '2px' }}>
-                {esMensual ? 'Total Bono Mensual' : 'Total Bono Trimestral'}
-              </div>
-              <div className="bonos-monto" style={{ fontSize: '1.4rem' }}>
-                {esMensual ? (() => {
-                  const parseMonto = (s) => {
-                    if (!s || s === '-') return 0;
-                    let str = s.toString().replace(/[^\d.,-]/g, '');
-                    if (str.includes(',') && str.includes('.')) {
-                      if (str.indexOf(',') < str.lastIndexOf('.')) {
-                        str = str.replace(/,/g, '');
-                      } else {
-                        str = str.replace(/\./g, '').replace(',', '.');
-                      }
-                    } else if (str.includes(',')) {
-                      if (str.length - str.lastIndexOf(',') <= 3) {
-                        str = str.replace(',', '.');
-                      } else {
-                        str = str.replace(/,/g, '');
-                      }
-                    }
-                    return parseFloat(str) || 0;
-                  };
-                  const prod = parseMonto(bonos.totalProductividadMensual);
-                  const indic = parseMonto(bonos.totalIndicadoresMensual);
-                  const total = prod + indic;
-                  
-                  if (bonos.bonoMensualTotal && bonos.bonoMensualTotal !== '-') {
-                     return bonos.bonoMensualTotal;
-                  }
-
-                  let formatted = total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                  return 'S/ ' + formatted;
-                })() : bonos.bonoTrimestralTotal}
-              </div>
-              
-              {esMensual && bonos.fechaPagoMensual && (
-                <div style={{ fontSize: '0.65rem', color: '#1e40af', fontWeight: 800, marginTop: '4px', background: '#ffffff50', display: 'inline-block', padding: '2px 8px', borderRadius: '10px' }}>
-                  🗓️ Fecha de pago: {bonos.fechaPagoMensual}
-                </div>
-              )}
-              
-              {!esMensual && bonos.fechaPagoTrimestral && (
-                <div style={{ fontSize: '0.65rem', color: '#1e40af', fontWeight: 800, marginTop: '4px', background: '#ffffff50', display: 'inline-block', padding: '2px 8px', borderRadius: '10px' }}>
-                  🗓️ Fecha de pago: {bonos.fechaPagoTrimestral}
-                </div>
-              )}
+              {comisiona ? <CheckCircle2 size={24} color="#059669" /> : <AlertTriangle size={24} color="#dc2626" />}
             </div>
+            <div style={{ flex: 1 }}>
+              <div style={{ fontSize: '0.7rem', fontWeight: 800, color: comisiona ? '#1e40af' : '#991b1b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
+                Condición de Mora
+              </div>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '2px' }}>
+                <span style={{ fontSize: '1.2rem', fontWeight: 900, color: comisiona ? '#002d72' : '#da291c' }}>{bonos.moraReal}</span>
+                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: comisiona ? '#166534' : '#991b1b', background: comisiona ? 'rgba(5, 150, 105, 0.1)' : 'rgba(220, 38, 38, 0.1)', padding: '2px 10px', borderRadius: '10px', border: `1px solid ${comisiona ? 'rgba(5, 150, 105, 0.2)' : 'rgba(220, 38, 38, 0.2)'}` }}>
+                  {bonos.estadoMora.replace(/[✅⚠️❌🚫]/g, '').trim()}
+                </span>
+              </div>
+            </div>
+          </div>
 
-            {esMensual ? (
-              <>
-                {/* PRODUCTIVIDAD MENSUAL */}
-                <div style={{ marginBottom: '8px' }}>
-                  <h6 style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--primary-bank)', marginBottom: '4px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <BarChart3 size={14} /> PRODUCTIVIDAD
-                    </div>
-                    {bonos.fechaPagoProductividad && (
-                      <div style={{ fontSize: '0.62rem', background: '#f1f5f9', padding: '2px 8px', borderRadius: '6px', color: '#475569', fontWeight: 700 }}>Pago: {bonos.fechaPagoProductividad}</div>
-                    )}
-                  </h6>
-                  <div style={{ overflowX: 'auto' }}>
-                    <table className="table-premium">
-                      <thead>
-                        <tr>
-                          <th style={{ padding: '4px 8px', fontSize: '0.6rem' }}>Indicador</th>
-                          <th style={{ textAlign: 'center', padding: '4px 8px', fontSize: '0.6rem' }}>Avance</th>
-                          <th style={{ textAlign: 'center', padding: '4px 8px', fontSize: '0.6rem' }}>Estado</th>
-                          <th style={{ textAlign: 'center', padding: '4px 8px', fontSize: '0.6rem' }}>Bono S/.</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <BonoRow label="Saldo Mensual" avance={bonos.saldoMensualAvance} estado={bonos.estadoSaldoMensual} bono={bonos.bonoSaldoMensual} />
-                        <BonoRow label="Colocación Mensual" avance={bonos.colocacionMensualAvance} estado={bonos.estadoColocacionMensual} bono={bonos.bonoColocacionMensual} />
-                        <tr style={{ background: '#eff6ff' }}>
-                          <td colSpan={3} style={{ fontWeight: 900, color: '#1e40af', textAlign: 'right', borderRadius: '12px 0 0 12px', padding: '6px 12px', fontSize: '0.75rem' }}>TOTAL PRODUCTIVIDAD</td>
-                          <td style={{ textAlign: 'center', fontWeight: 900, fontSize: '0.9rem', color: '#1e40af', borderRadius: '0 12px 12px 0', padding: '6px 12px' }}>{bonos.totalProductividadMensual}</td>
-                        </tr>
-                      </tbody>
-                    </table>
+          {!comisiona ? (
+            <div style={{ textAlign: 'center', padding: '40px 20px', background: 'white', borderRadius: '16px', border: '1px dashed #cbd5e1' }}>
+              <ShieldAlert size={48} color="#94a3b8" style={{ marginBottom: '16px', opacity: 0.5 }} />
+              <h5 style={{ fontWeight: 800, color: '#475569', margin: '0 0 8px 0' }}>Bono Retenido</h5>
+              <p style={{ color: '#64748b', fontSize: '0.85rem', margin: 0, lineHeight: '1.5' }}>
+                Tu nivel de mora actual excede el límite permitido para comisionar este periodo. Concéntrate en la recuperación para el próximo cierre.
+              </p>
+            </div>
+          ) : (
+            <>
+              {/* Tarjeta de Total Premium */}
+              <div style={{
+                background: 'var(--grad-primary)',
+                borderRadius: '20px', padding: '24px', textAlign: 'center', marginBottom: '24px',
+                color: 'white', position: 'relative', overflow: 'hidden',
+                boxShadow: '0 10px 25px -5px rgba(0, 45, 114, 0.3)'
+              }}>
+                <Wallet size={160} color="rgba(255,255,255,0.06)" style={{ position: 'absolute', top: '-30px', right: '-30px', transform: 'rotate(-15deg)' }} />
+                
+                <div style={{ position: 'relative', zIndex: 1 }}>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#bfdbfe', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '8px' }}>
+                    {esMensual ? 'Total Bono Mensual' : 'Total Bono Trimestral'}
                   </div>
-                </div>
+                  <div style={{ fontSize: '2.5rem', fontWeight: 900, textShadow: '0 2px 4px rgba(0,0,0,0.2)', letterSpacing: '-1px' }}>
+                    {esMensual ? (() => {
+                      const parseMonto = (s) => {
+                        if (!s || s === '-') return 0;
+                        let str = s.toString().replace(/[^\d.,-]/g, '');
+                        if (str.includes(',') && str.includes('.')) {
+                          if (str.indexOf(',') < str.lastIndexOf('.')) str = str.replace(/,/g, '');
+                          else str = str.replace(/\./g, '').replace(',', '.');
+                        } else if (str.includes(',')) {
+                          if (str.length - str.lastIndexOf(',') <= 3) str = str.replace(',', '.');
+                          else str = str.replace(/,/g, '');
+                        }
+                        return parseFloat(str) || 0;
+                      };
+                      const prod = parseMonto(bonos.totalProductividadMensual);
+                      const indic = parseMonto(bonos.totalIndicadoresMensual);
+                      const total = prod + indic;
+                      if (bonos.bonoMensualTotal && bonos.bonoMensualTotal !== '-') return bonos.bonoMensualTotal;
+                      return 'S/ ' + total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                    })() : bonos.bonoTrimestralTotal}
+                  </div>
 
-                {/* INDICADORES MENSUAL */}
-                <div style={{ marginBottom: '2px' }}>
-                  <h6 style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--primary-bank)', marginBottom: '4px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                      <ClipboardList size={14} /> INDICADORES
+                  {(esMensual ? bonos.fechaPagoMensual : bonos.fechaPagoTrimestral) && (
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', fontWeight: 700, marginTop: '12px', background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(4px)', border: '1px solid rgba(255,255,255,0.2)', padding: '6px 14px', borderRadius: '20px' }}>
+                      <Calendar size={14} /> Fecha de pago: {esMensual ? bonos.fechaPagoMensual : bonos.fechaPagoTrimestral}
                     </div>
-                    {bonos.fechaPagoIndicadores && (
-                      <div style={{ fontSize: '0.62rem', background: '#f1f5f9', padding: '2px 8px', borderRadius: '6px', color: '#475569', fontWeight: 700 }}>Pago: {bonos.fechaPagoIndicadores}</div>
-                    )}
-                  </h6>
-                  <div style={{ overflowX: 'auto' }}>
-                    <table className="table-premium">
-                      <thead>
-                        <tr>
-                          <th style={{ padding: '4px 8px', fontSize: '0.6rem' }}>Indicador</th>
-                          <th style={{ textAlign: 'center', padding: '4px 8px', fontSize: '0.6rem' }}>Avance</th>
-                          <th style={{ textAlign: 'center', padding: '4px 8px', fontSize: '0.6rem' }}>Estado</th>
-                          <th style={{ textAlign: 'center', padding: '4px 8px', fontSize: '0.6rem' }}>Bono S/.</th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        <BonoRow label="Tasa Promedio" avance={bonos.tasaPromedioAvance} estado={bonos.estadoTasaPromedio} bono={bonos.bonoTasaPromedio} />
-                        <BonoRow label="N° Operaciones" avance={bonos.nOperacionesAvance} estado={bonos.estadoOperaciones} bono={bonos.bonoOperaciones} />
-                        <BonoRow label="Clientes Nuevos" avance={bonos.clientesNuevosAvance} estado={bonos.estadoNuevos} bono={bonos.bonoNuevos} />
-                        <BonoRow label="Clientes Activos" avance={bonos.clientesActivosAvance} estado={bonos.estadoActivos} bono={bonos.bonoActivos} />
-                        <tr style={{ background: '#eff6ff' }}>
-                          <td colSpan={3} style={{ fontWeight: 900, color: '#1e40af', textAlign: 'right', borderRadius: '12px 0 0 12px', padding: '6px 12px', fontSize: '0.75rem' }}>TOTAL INDICADORES</td>
-                          <td style={{ textAlign: 'center', fontWeight: 900, fontSize: '0.9rem', color: '#1e40af', borderRadius: '0 12px 12px 0', padding: '6px 12px' }}>{bonos.totalIndicadoresMensual}</td>
-                        </tr>
-                      </tbody>
-                    </table>
-                  </div>
-                </div>
-              </>
-            ) : (
-              /* PRODUCTIVIDAD TRIMESTRAL */
-              <div style={{ marginBottom: '2px' }}>
-                <h6 style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--primary-bank)', marginBottom: '4px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <CalendarCheck size={14} /> PRODUCTIVIDAD TRIMESTRAL
-                  </div>
-                  {bonos.fechaPagoTrim && (
-                    <div style={{ fontSize: '0.62rem', background: '#f1f5f9', padding: '2px 8px', borderRadius: '6px', color: '#475569', fontWeight: 700 }}>Pago: {bonos.fechaPagoTrim}</div>
                   )}
-                </h6>
-                <div style={{ overflowX: 'auto' }}>
-                  <table className="table-premium">
-                    <thead>
-                      <tr>
-                        <th style={{ padding: '4px 8px', fontSize: '0.6rem' }}>Indicador</th>
-                        <th style={{ textAlign: 'center', padding: '4px 8px', fontSize: '0.6rem' }}>Avance</th>
-                        <th style={{ textAlign: 'center', padding: '4px 8px', fontSize: '0.6rem' }}>Estado</th>
-                        <th style={{ textAlign: 'center', padding: '4px 8px', fontSize: '0.6rem' }}>Bono S/.</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      <BonoRow label="Saldo Trimestral" avance={bonos.saldoTrimestralAvance} estado={bonos.estadoSaldoTrim} bono={bonos.bonoSaldoTrim} />
-                      <BonoRow label="Colocación Trimestral" avance={bonos.colocacionTrimestralAvance} estado={bonos.estadoColocTrim} bono={bonos.bonoColocTrim} />
-                      <tr style={{ background: '#eff6ff' }}>
-                        <td colSpan={3} style={{ fontWeight: 900, color: '#1e40af', textAlign: 'right', borderRadius: '12px 0 0 12px', padding: '6px 12px', fontSize: '0.75rem' }}>TOTAL TRIMESTRAL</td>
-                        <td style={{ textAlign: 'center', fontWeight: 900, fontSize: '0.9rem', color: '#1e40af', borderRadius: '0 12px 12px 0', padding: '6px 12px' }}>{bonos.bonoTrimestralTotal}</td>
-                      </tr>
-                    </tbody>
-                  </table>
                 </div>
               </div>
-            )}
-          </>
-        )}
+
+              {esMensual ? (
+                <>
+                  {/* PRODUCTIVIDAD MENSUAL */}
+                  <div style={{ marginBottom: '24px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', padding: '0 4px' }}>
+                      <h6 style={{ fontSize: '0.85rem', fontWeight: 900, color: 'var(--primary-bank)', margin: 0, display: 'flex', alignItems: 'center', gap: '8px', textTransform: 'uppercase' }}>
+                        <Target size={16} color="#2563eb" /> Productividad
+                      </h6>
+                      {bonos.fechaPagoProductividad && (
+                        <span style={{ fontSize: '0.65rem', background: '#e2e8f0', padding: '3px 10px', borderRadius: '10px', color: '#475569', fontWeight: 800 }}>
+                          Pago: {bonos.fechaPagoProductividad}
+                        </span>
+                      )}
+                    </div>
+                    
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <BonoItem label="Saldo Mensual" avance={bonos.saldoMensualAvance} estado={bonos.estadoSaldoMensual} bono={bonos.bonoSaldoMensual} icon={Wallet} />
+                      <BonoItem label="Colocación Mensual" avance={bonos.colocacionMensualAvance} estado={bonos.estadoColocacionMensual} bono={bonos.bonoColocacionMensual} icon={TrendingUp} />
+                      
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', background: '#eff6ff', borderRadius: '12px', border: '1px dashed #bfdbfe', marginTop: '2px' }}>
+                        <span style={{ fontWeight: 800, color: '#1e40af', fontSize: '0.75rem', letterSpacing: '0.5px' }}>TOTAL PRODUCTIVIDAD</span>
+                        <span style={{ fontWeight: 900, fontSize: '1.05rem', color: '#002d72' }}>{bonos.totalProductividadMensual}</span>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* INDICADORES MENSUAL */}
+                  <div>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', padding: '0 4px' }}>
+                      <h6 style={{ fontSize: '0.85rem', fontWeight: 900, color: 'var(--primary-bank)', margin: 0, display: 'flex', alignItems: 'center', gap: '8px', textTransform: 'uppercase' }}>
+                        <ClipboardList size={16} color="#2563eb" /> Indicadores
+                      </h6>
+                      {bonos.fechaPagoIndicadores && (
+                        <span style={{ fontSize: '0.65rem', background: '#e2e8f0', padding: '3px 10px', borderRadius: '10px', color: '#475569', fontWeight: 800 }}>
+                          Pago: {bonos.fechaPagoIndicadores}
+                        </span>
+                      )}
+                    </div>
+                    
+                    <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                      <BonoItem label="Tasa Promedio" avance={bonos.tasaPromedioAvance} estado={bonos.estadoTasaPromedio} bono={bonos.bonoTasaPromedio} icon={Percent} />
+                      <BonoItem label="N° Operaciones" avance={bonos.nOperacionesAvance} estado={bonos.estadoOperaciones} bono={bonos.bonoOperaciones} icon={Hash} />
+                      <BonoItem label="Clientes Nuevos" avance={bonos.clientesNuevosAvance} estado={bonos.estadoNuevos} bono={bonos.bonoNuevos} icon={UserPlus} />
+                      <BonoItem label="Clientes Activos" avance={bonos.clientesActivosAvance} estado={bonos.estadoActivos} bono={bonos.bonoActivos} icon={UserCheck} />
+                      
+                      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', background: '#eff6ff', borderRadius: '12px', border: '1px dashed #bfdbfe', marginTop: '2px' }}>
+                        <span style={{ fontWeight: 800, color: '#1e40af', fontSize: '0.75rem', letterSpacing: '0.5px' }}>TOTAL INDICADORES</span>
+                        <span style={{ fontWeight: 900, fontSize: '1.05rem', color: '#002d72' }}>{bonos.totalIndicadoresMensual}</span>
+                      </div>
+                    </div>
+                  </div>
+                </>
+              ) : (
+                /* PRODUCTIVIDAD TRIMESTRAL */
+                <div>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', padding: '0 4px' }}>
+                    <h6 style={{ fontSize: '0.85rem', fontWeight: 900, color: 'var(--primary-bank)', margin: 0, display: 'flex', alignItems: 'center', gap: '8px', textTransform: 'uppercase' }}>
+                      <CalendarCheck size={16} color="#2563eb" /> Productividad Trimestral
+                    </h6>
+                    {bonos.fechaPagoTrim && (
+                      <span style={{ fontSize: '0.65rem', background: '#e2e8f0', padding: '3px 10px', borderRadius: '10px', color: '#475569', fontWeight: 800 }}>
+                        Pago: {bonos.fechaPagoTrim}
+                      </span>
+                    )}
+                  </div>
+                  
+                  <div style={{ display: 'flex', flexDirection: 'column', gap: '6px' }}>
+                    <BonoItem label="Saldo Trimestral" avance={bonos.saldoTrimestralAvance} estado={bonos.estadoSaldoTrim} bono={bonos.bonoSaldoTrim} icon={Wallet} />
+                    <BonoItem label="Colocación Trimestral" avance={bonos.colocacionTrimestralAvance} estado={bonos.estadoColocTrim} bono={bonos.bonoColocTrim} icon={TrendingUp} />
+                    
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '14px 16px', background: '#eff6ff', borderRadius: '12px', border: '1px dashed #bfdbfe', marginTop: '2px' }}>
+                      <span style={{ fontWeight: 800, color: '#1e40af', fontSize: '0.75rem', letterSpacing: '0.5px' }}>TOTAL TRIMESTRAL</span>
+                      <span style={{ fontWeight: 900, fontSize: '1.05rem', color: '#002d72' }}>{bonos.bonoTrimestralTotal}</span>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </>
+          )}
+        </div>
       </div>
     </div>
   );
@@ -395,10 +423,10 @@ function SemiCircleGauge({ value, color }) {
   const pctStr = (value || '0').toString().replace('%', '').replace(',', '.');
   const pctNum = parseFloat(pctStr) || 0;
   const pctClamped = Math.min(Math.max(pctNum, 0), 100);
-  
+
   const r = 36;
-  const circum = Math.PI * r; 
-  
+  const circum = Math.PI * r;
+
   const [offset, setOffset] = useState(circum);
   useEffect(() => {
     const timer = setTimeout(() => setOffset(circum - (pctClamped / 100) * circum), 150);
@@ -414,7 +442,7 @@ function SemiCircleGauge({ value, color }) {
         </svg>
       </div>
       <div style={{ fontSize: '1rem', fontWeight: 900, color: color, marginTop: '2px', letterSpacing: '-0.5px' }}>
-         {Math.round(pctNum)}%
+        {Math.round(pctNum)}%
       </div>
     </div>
   );
@@ -441,7 +469,7 @@ function EnrichedCard({ item }) {
 
   const metaNum = parseNum(item.m);
   const realNum = parseNum(item.r);
-  
+
   let fMeta = metaNum;
   let fReal = realNum;
 
@@ -449,23 +477,23 @@ function EnrichedCard({ item }) {
     if (fMeta > 100) fMeta = fMeta / 100;
     if (fReal > 100) fReal = fReal / 100;
   }
-  
+
   const diff = fReal - fMeta;
   const pctReal = fMeta === 0 ? (fReal > 0 ? 100 : 0) : Math.min((fReal / fMeta) * 100, 100);
 
   let diffText = '';
-  let diffColor = '#64748b'; 
+  let diffColor = '#64748b';
   let formattedDiff = Math.abs(diff).toLocaleString('es-PE', { minimumFractionDigits: item.type === 'number' ? 0 : 2, maximumFractionDigits: item.type === 'number' ? 0 : 2 });
 
   if (item.type === 'money') formattedDiff = 'S/. ' + formattedDiff;
   if (item.type === 'percent') formattedDiff = formattedDiff + '%';
-  
+
   if (diff >= 0) {
     diffText = `🔥 Superado (+${formattedDiff})`;
-    diffColor = '#059669'; 
+    diffColor = '#059669';
   } else {
     diffText = `⚠️ Faltan ${formattedDiff}`;
-    diffColor = '#da291c'; 
+    diffColor = '#da291c';
   }
 
   if (item.type === 'percent' && diff < 0) diffText = `⚠️ Debajo por ${formattedDiff}`;
@@ -484,42 +512,42 @@ function EnrichedCard({ item }) {
   let mDisplay = item.m;
   let rDisplay = item.r;
   if (item.type === 'percent') {
-     mDisplay = fMeta.toFixed(2) + '%';
-     rDisplay = fReal.toFixed(2) + '%';
+    mDisplay = fMeta.toFixed(2) + '%';
+    rDisplay = fReal.toFixed(2) + '%';
   }
 
   return (
     <div className="enriched-card">
-       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-             <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: `${color}15`, color: color, display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${color}30` }}>
-                <Icon size={20} color={color} />
-             </div>
-             <div>
-                <div style={{ fontWeight: 800, fontSize: '0.88rem', color: '#1e293b' }}>{item.l}</div>
-                <div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Objetivo: {mDisplay}</div>
-             </div>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+          <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: `${color}15`, color: color, display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${color}30` }}>
+            <Icon size={20} color={color} />
           </div>
-          <span className={`badge-premium ${badgeClass}`} style={{ fontSize: '0.58rem' }}>{statusText}</span>
-       </div>
+          <div>
+            <div style={{ fontWeight: 800, fontSize: '0.88rem', color: '#1e293b' }}>{item.l}</div>
+            <div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Objetivo: {mDisplay}</div>
+          </div>
+        </div>
+        <span className={`badge-premium ${badgeClass}`} style={{ fontSize: '0.58rem' }}>{statusText}</span>
+      </div>
 
-       <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-end', justifyContent: 'space-between', flex: 1, marginBottom: '12px' }}>
-          <div style={{ flex: 1 }}>
-             <div style={{ fontSize: '0.65rem', color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0px', letterSpacing: '0.5px' }}>ALCANZADO</div>
-             <div style={{ fontSize: '1.2rem', fontWeight: 900, color: color, lineHeight: '1.2', marginBottom: '6px' }}>{rDisplay}</div>
-             <div style={{ border: `1px solid ${diffColor}20`, background: diffColor+'10', display: 'inline-flex', padding: '3px 8px', borderRadius: '8px' }}>
-                <span style={{ fontSize: '0.62rem', fontWeight: 800, color: diffColor }}>{diffText}</span>
-             </div>
+      <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-end', justifyContent: 'space-between', flex: 1, marginBottom: '12px' }}>
+        <div style={{ flex: 1 }}>
+          <div style={{ fontSize: '0.65rem', color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0px', letterSpacing: '0.5px' }}>ALCANZADO</div>
+          <div style={{ fontSize: '1.2rem', fontWeight: 900, color: color, lineHeight: '1.2', marginBottom: '6px' }}>{rDisplay}</div>
+          <div style={{ border: `1px solid ${diffColor}20`, background: diffColor + '10', display: 'inline-flex', padding: '3px 8px', borderRadius: '8px' }}>
+            <span style={{ fontSize: '0.62rem', fontWeight: 800, color: diffColor }}>{diffText}</span>
           </div>
-          <div style={{ marginRight: '-4px' }}>
-             <SemiCircleGauge value={item.s} color={color} />
-          </div>
-       </div>
+        </div>
+        <div style={{ marginRight: '-4px' }}>
+          <SemiCircleGauge value={item.s} color={color} />
+        </div>
+      </div>
 
-       {/* Barra de Progreso Inferior Lineal */}
-       <div style={{ marginTop: 'auto', background: '#f1f5f9', height: '6px', borderRadius: '6px', overflow: 'hidden' }}>
-          <div style={{ width: `${pctReal}%`, background: color, height: '100%', transition: 'width 1.5s cubic-bezier(0.16,1,0.3,1)' }} />
-       </div>
+      {/* Barra de Progreso Inferior Lineal */}
+      <div style={{ marginTop: 'auto', background: '#f1f5f9', height: '6px', borderRadius: '6px', overflow: 'hidden' }}>
+        <div style={{ width: `${pctReal}%`, background: color, height: '100%', transition: 'width 1.5s cubic-bezier(0.16,1,0.3,1)' }} />
+      </div>
     </div>
   );
 }
@@ -549,7 +577,7 @@ function MensualView({ data }) {
             </button>
           )}
         </div>
-        
+
         {/* Renderizado Premium Grid de Tarjetas */}
         <div className="grid-cards-container">
           {mensualMap.map((item, i) => (
@@ -579,7 +607,7 @@ function TrimestralView({ data }) {
           <h5 style={{ fontWeight: 800, margin: 0, fontSize: '1rem', color: '#002d72' }}>Análisis Trimestral</h5>
           {bonos && (
             <button onClick={() => setShowBonos(true)} className="btn-ver-bonos-compact">
-              <Eye size={14} /> Ver Bonos
+              <Eye size={14} /> Ver Bonos Trimestrales
             </button>
           )}
         </div>
@@ -761,8 +789,8 @@ function GeneralView({ data }) {
           {admins.length > 0 && <EjecutivoCard persona={admins[0]} pos={0} isAdmin={true} isOpen={openId === 'admin_0'} onToggle={() => setOpenId(openId === 'admin_0' ? null : 'admin_0')} />}
           {/* Ejecutivos */}
           {ejecutivos.map((ej, idx) => {
-             const id = ej.nombre + idx;
-             return <EjecutivoCard key={idx} persona={ej} pos={idx + 1} isAdmin={false} isOpen={openId === id} onToggle={() => setOpenId(openId === id ? null : id)} />;
+            const id = ej.nombre + idx;
+            return <EjecutivoCard key={idx} persona={ej} pos={idx + 1} isAdmin={false} isOpen={openId === id} onToggle={() => setOpenId(openId === id ? null : id)} />;
           })}
         </>
       )}
@@ -805,42 +833,18 @@ export default function MetasTab({ data }) {
           font-size: 0.72rem !important;
           border-radius: 8px !important;
         }
-        .sub-nav-wrapper {
-          display: inline-flex !important;
-          background: rgba(241, 245, 249, 0.6) !important;
-          border-radius: 12px !important;
-          padding: 4px !important;
-          border: 1px solid rgba(226, 232, 240, 0.8) !important;
-          gap: 2px !important;
-          box-shadow: inset 0 2px 4px rgba(0,0,0,0.02) !important;
-          margin: 0 auto;
-        }
         .sub-nav-btn {
-          flex: 0 1 auto !important;
-          background: transparent !important;
-          color: #64748b !important;
-          border: none !important;
-          font-weight: 700 !important;
-          padding: 6px 20px !important;
+          padding: 6px 14px !important;
+          font-size: 0.75rem !important;
+          gap: 6px !important;
           border-radius: 8px !important;
-          font-size: 0.78rem !important;
-          transition: all 0.25s ease !important;
-          display: inline-flex;
-          align-items: center;
-          justify-content: center;
         }
-        .sub-nav-btn.active {
-          background: #ffffff !important;
-          color: #0f172a !important;
-          box-shadow: 0 2px 6px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04) !important;
-        }
-        .sub-nav-btn:hover:not(.active) {
-          background: rgba(255,255,255,0.4) !important;
-          color: #334155 !important;
+        .sub-nav-wrapper {
+          gap: 6px !important;
         }
       `}</style>
       {/* Sub-navegación */}
-      <div style={{ display: 'flex', justifyContent: 'center', marginBottom: '14px', marginTop: '4px' }}>
+      <div className="glass-card" style={{ padding: '8px 12px' }}>
         <div className="sub-nav-wrapper">
           <button className={`sub-nav-btn${subView === 'mensual' ? ' active' : ''}`} onClick={() => setSubView('mensual')}>
             <Calendar size={14} /> Mensual
