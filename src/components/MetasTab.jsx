@@ -252,45 +252,7 @@ function BonosModal({ bonos, data, onClose, mode }) {
 
         <div style={{ padding: '24px', maxHeight: '75vh', overflowY: 'auto' }}>
           
-          {/* Banner Mora Superior */}
-          <div style={{
-            background: comisiona ? 'linear-gradient(135deg, #eff6ff, #dbeafe)' : 'linear-gradient(135deg, #fef2f2, #fee2e2)',
-            border: `1px solid ${comisiona ? '#bfdbfe' : '#fecaca'}`,
-            borderRadius: '16px', padding: '14px 20px', marginBottom: '20px',
-            display: 'flex', alignItems: 'center', gap: '16px',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.03)'
-          }}>
-            <div style={{
-              width: '44px', height: '44px', borderRadius: '12px',
-              background: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center',
-              boxShadow: '0 2px 8px rgba(0,0,0,0.05)'
-            }}>
-              {comisiona ? <CheckCircle2 size={24} color="#059669" /> : <AlertTriangle size={24} color="#dc2626" />}
-            </div>
-            <div style={{ flex: 1 }}>
-              <div style={{ fontSize: '0.7rem', fontWeight: 800, color: comisiona ? '#1e40af' : '#991b1b', textTransform: 'uppercase', letterSpacing: '0.5px' }}>
-                Condición de Mora
-              </div>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginTop: '2px' }}>
-                <span style={{ fontSize: '1.2rem', fontWeight: 900, color: comisiona ? '#002d72' : '#da291c' }}>{bonos.moraReal}</span>
-                <span style={{ fontSize: '0.75rem', fontWeight: 700, color: comisiona ? '#166534' : '#991b1b', background: comisiona ? 'rgba(5, 150, 105, 0.1)' : 'rgba(220, 38, 38, 0.1)', padding: '2px 10px', borderRadius: '10px', border: `1px solid ${comisiona ? 'rgba(5, 150, 105, 0.2)' : 'rgba(220, 38, 38, 0.2)'}` }}>
-                  {bonos.estadoMora.replace(/[✅⚠️❌🚫]/g, '').trim()}
-                </span>
-              </div>
-            </div>
-          </div>
-
-          {!comisiona ? (
-            <div style={{ textAlign: 'center', padding: '40px 20px', background: 'white', borderRadius: '16px', border: '1px dashed #cbd5e1' }}>
-              <ShieldAlert size={48} color="#94a3b8" style={{ marginBottom: '16px', opacity: 0.5 }} />
-              <h5 style={{ fontWeight: 800, color: '#475569', margin: '0 0 8px 0' }}>Bono Retenido</h5>
-              <p style={{ color: '#64748b', fontSize: '0.85rem', margin: 0, lineHeight: '1.5' }}>
-                Tu nivel de mora actual excede el límite permitido para comisionar este periodo. Concéntrate en la recuperación para el próximo cierre.
-              </p>
-            </div>
-          ) : (
-            <>
-              {/* Tarjeta de Total Premium */}
+          {/* Tarjeta de Total Premium */}
               <div style={{
                 background: 'var(--grad-primary)',
                 borderRadius: '20px', padding: '24px', textAlign: 'center', marginBottom: '24px',
@@ -410,8 +372,6 @@ function BonosModal({ bonos, data, onClose, mode }) {
                   </div>
                 </div>
               )}
-            </>
-          )}
         </div>
       </div>
     </div>
@@ -575,6 +535,7 @@ function MensualView({ data, subView, setSubView }) {
   const bonos = data.bonos;
 
   const mensualMap = [
+    { l: 'Mora', m: data.m0 || '-', r: data.m1 || (bonos && bonos.moraReal) || '-', s: (bonos && bonos.estadoMora) || '-', type: 'percent', icon: ShieldAlert },
     { l: 'Saldo Cartera', m: data.sc1, r: data.sc2, s: data.sc3, type: 'money', icon: DollarSign },
     { l: 'Colocaciones', m: data.col1, r: data.col2, s: data.col3, type: 'money', icon: TrendingUp },
     { l: 'Tasa Promedio', m: data.t1, r: data.t2, s: data.t3, type: 'percent', icon: BarChart3 },
@@ -618,6 +579,7 @@ function TrimestralView({ data, subView, setSubView }) {
   const bonos = data.bonos;
 
   const trimData = [
+    { l: 'Mora Trimestral', m: data.m0 || '-', r: data.m1 || (bonos && bonos.moraReal) || '-', s: (bonos && bonos.estadoMora) || '-', type: 'percent', icon: ShieldAlert },
     { l: 'Saldo Cartera', m: data.ts1, r: data.ts2, s: data.ts3, type: 'money', icon: DollarSign },
     { l: 'Colocaciones', m: data.tc1, r: data.tc2, s: data.tc3, type: 'money', icon: TrendingUp }
   ];
