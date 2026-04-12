@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { Calendar, TrendingUp, Users, ShieldAlert, Coins, ChevronDown, ChevronUp, Building2, Loader2 } from 'lucide-react';
 import { callGAS } from '../services/api';
 
@@ -96,9 +96,25 @@ function GaugeRing({ value, color }) {
 // ═══ INDICADOR BADGE EXPANDIBLE ═══
 function IndicatorBadge({ icon: Icon, label, situation, sitColor, meta, real, realColor }) {
   const [open, setOpen] = useState(false);
+  const ref = useRef(null);
+
+  useEffect(() => {
+    function handleClickOutside(event) {
+      if (ref.current && !ref.current.contains(event.target)) {
+        setOpen(false);
+      }
+    }
+    if (open) {
+      document.addEventListener("mousedown", handleClickOutside);
+    }
+    return () => {
+      document.removeEventListener("mousedown", handleClickOutside);
+    };
+  }, [open]);
+
   return (
-    <div className="ind-badge" onClick={() => setOpen(!open)}
-      style={{ borderColor: sitColor + '40', background: sitColor + '08' }}>
+    <div className="ind-badge" ref={ref} onClick={() => setOpen(!open)}
+      style={{ borderColor: sitColor + '40', background: sitColor + '08', zIndex: open ? 100 : 1 }}>
       <div className="ind-badge-inner">
         <Icon size={12} color="#64748b" />
         <span className="ind-badge-label">{label}</span>
@@ -263,8 +279,7 @@ function IndicatorTable({ persona }) {
 }
 
 // ═══ EJECUTIVO CARD (Acordeón) ═══
-function EjecutivoCard({ persona, pos, isAdmin }) {
-  const [open, setOpen] = useState(false);
+function EjecutivoCard({ persona, pos, isAdmin, isOpen, onToggle }) {
   const moraDotColor = getMoraColor(persona.moraSit || persona.mora);
   const colPctRaw = parseFloat((persona.colMesPct || '0').replace('%', '').replace(',', '.')) || 0;
   const colPct = Math.min(colPctRaw, 100);
@@ -272,7 +287,7 @@ function EjecutivoCard({ persona, pos, isAdmin }) {
 
   return (
     <div className={`ej-card${isAdmin ? ' admin-card' : ''}`}>
-      <div className="ej-card-header" onClick={() => setOpen(!open)}>
+      <div className="ej-card-header" onClick={onToggle}>
         <div style={{
           width: '26px', height: '26px', borderRadius: isAdmin ? '10px' : '50%',
           background: isAdmin ? 'var(--grad-primary)' : '#e2e8f0',
@@ -297,9 +312,9 @@ function EjecutivoCard({ persona, pos, isAdmin }) {
           </div>
           <span style={{ fontSize: '0.6rem', fontWeight: 800, color: colColor, minWidth: '28px', textAlign: 'right' }}>{persona.colMesPct || '0%'}</span>
         </div>
-        {open ? <ChevronUp size={14} color={isAdmin ? '#1e40af' : '#94a3b8'} /> : <ChevronDown size={14} color={isAdmin ? '#1e40af' : '#94a3b8'} />}
+        {isOpen ? <ChevronUp size={14} color={isAdmin ? '#1e40af' : '#94a3b8'} /> : <ChevronDown size={14} color={isAdmin ? '#1e40af' : '#94a3b8'} />}
       </div>
-      {open && (
+      {isOpen && (
         <div className="ej-detail-panel">
           <IndicatorTable persona={persona} />
         </div>
@@ -313,6 +328,7 @@ function GeneralView({ data }) {
   const [loading, setLoading] = useState(false);
   const [avanceData, setAvanceData] = useState(null);
   const [selectedOficina, setSelectedOficina] = useState(data.oficina);
+  const [openId, setOpenId] = useState(null);
 
   const avance = avanceData || data.avanceOficina || { ejecutivos: [], admins: [] };
   const todosEjecutivos = avance.ejecutivos || [];
@@ -380,17 +396,19 @@ function GeneralView({ data }) {
         // GERENCIA: Lista unificada
         [...admins, ...ejecutivos]
           .sort((a, b) => (Number(b.opsReal) || 0) - (Number(a.opsReal) || 0))
-          .map((persona, idx) => (
-            <EjecutivoCard key={idx} persona={persona} pos={idx + 1} isAdmin={persona.esAdmin} />
-          ))
+          .map((persona, idx) => {
+            const id = persona.nombre + idx;
+            return <EjecutivoCard key={idx} persona={persona} pos={idx + 1} isAdmin={persona.esAdmin} isOpen={openId === id} onToggle={() => setOpenId(openId === id ? null : id)} />;
+          })
       ) : (
         <>
           {/* Admin separado */}
-          {admins.length > 0 && <EjecutivoCard persona={admins[0]} pos={0} isAdmin={true} />}
+          {admins.length > 0 && <EjecutivoCard persona={admins[0]} pos={0} isAdmin={true} isOpen={openId === 'admin_0'} onToggle={() => setOpenId(openId === 'admin_0' ? null : 'admin_0')} />}
           {/* Ejecutivos */}
-          {ejecutivos.map((ej, idx) => (
-            <EjecutivoCard key={idx} persona={ej} pos={idx + 1} isAdmin={false} />
-          ))}
+          {ejecutivos.map((ej, idx) => {
+             const id = ej.nombre + idx;
+             return <EjecutivoCard key={idx} persona={ej} pos={idx + 1} isAdmin={false} isOpen={openId === id} onToggle={() => setOpenId(openId === id ? null : id)} />;
+          })}
         </>
       )}
     </div>

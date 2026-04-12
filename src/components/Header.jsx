@@ -31,8 +31,8 @@ export default function Header({ userData, isSyncing, lastSync, onSync, onLogout
                <BadgeInfo size={14} color="var(--primary-bank)" style={{marginRight: 4}}/> 
                {userData.codigo || "EJECUTIVO"}
              </span>
-             <span style={{ display: 'flex', alignItems: 'center', background: '#fefce8', padding: '3px 8px', borderRadius: '6px', border: '1px solid #fef08a' }}>
-               <Star size={12} fill="#eab308" color="#eab308" style={{marginRight: 4}}/> 
+             <span style={{ display: 'flex', alignItems: 'center', background: '#eff6ff', padding: '3px 8px', borderRadius: '6px', border: '1px solid #bfdbfe', color: '#1e40af' }}>
+               <Star size={12} fill="#3b82f6" color="#3b82f6" style={{marginRight: 4}}/> 
                {userData.categoria || "N/A"}
              </span>
              <span style={{ display: 'flex', alignItems: 'center', background: '#f0f9ff', padding: '3px 8px', borderRadius: '6px', border: '1px solid #e0f2fe' }}>
