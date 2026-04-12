@@ -1,8 +1,9 @@
-import { Clock, RefreshCw, BadgeInfo, Star, Building2, LogOut } from 'lucide-react';
+import { Clock, RefreshCw, LogOut } from 'lucide-react';
 
 export default function Header({ userData, isSyncing, lastSync, onSync, onLogout }) {
   if (!userData) return null;
 
+  return (
     <header className="glass-header" style={{ marginBottom: '16px', display: 'flex', justifyContent: 'flex-end' }}>
       <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
          <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
