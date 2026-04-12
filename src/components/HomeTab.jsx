@@ -11,14 +11,14 @@ export default function HomeTab({ data }) {
 
   const getSemaforo = (pct, invertir) => {
     if (invertir) { // Para MORA: menos es mejor
-      if (pct <= 2.5) return { color: '#10b981', txt: 'Saludable' };
-      if (pct <= 3.5) return { color: '#f59e0b', txt: 'En Riesgo' };
-      return { color: '#ef4444', txt: 'Crítico' };
+      if (pct <= 2.5) return { color: '#002d72', txt: 'Saludable' };
+      if (pct <= 3.5) return { color: '#3b82f6', txt: 'En Riesgo' };
+      return { color: '#da291c', txt: 'Crítico' };
     }
     // Para OPERACIONES/COLOCACION: más es mejor
-    if (pct >= 100) return { color: '#10b981', txt: 'Cumplido' };
-    if (pct >= 80) return { color: '#f59e0b', txt: 'En Progreso' };
-    return { color: '#ef4444', txt: 'Por Mejorar' };
+    if (pct >= 100) return { color: '#002d72', txt: 'Cumplido' };
+    if (pct >= 80) return { color: '#3b82f6', txt: 'En Progreso' };
+    return { color: '#da291c', txt: 'Por Mejorar' };
   };
 
   // Cálculos
@@ -180,11 +180,11 @@ export default function HomeTab({ data }) {
             </div>
             <div>
               <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700 }}>Trimestral</div>
-              <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#166534' }}>{bonos.bonoTrimestralTotal || 'S/.0.00'}</div>
+              <div style={{ fontSize: '1.2rem', fontWeight: 900, color: '#002d72' }}>{bonos.bonoTrimestralTotal || 'S/.0.00'}</div>
             </div>
             <div>
               <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)', fontWeight: 700 }}>Filtro de Mora</div>
-              <div style={{ fontSize: '0.85rem', fontWeight: 800, color: comisiona ? '#166534' : '#991b1b', display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <div style={{ fontSize: '0.85rem', fontWeight: 800, color: comisiona ? '#002d72' : '#da291c', display: 'flex', alignItems: 'center', gap: '4px' }}>
                 {comisiona ? <CheckCircle size={14}/> : <AlertTriangle size={14}/>} {bonos.estadoMora}
               </div>
             </div>
@@ -197,7 +197,7 @@ export default function HomeTab({ data }) {
       {/* ALERTAS DINÁMICAS */}
       <div className="glass-card" style={{ padding: '12px 16px' }}>
         <h5 style={{ fontSize: '0.85rem', marginBottom: '8px', fontWeight: 800, display: 'flex', alignItems: 'center', gap: '8px' }}>
-          <Bell size={16} color="#f59e0b" /> ALERTAS
+          <Bell size={16} color="#002d72" /> ALERTAS
         </h5>
         <div>
           {alertas.map((a, i) => {

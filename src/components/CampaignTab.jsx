@@ -206,8 +206,8 @@ function RankingView({ camp, data }) {
                 <div key={idx} className="ranking-item descalificado">
                   <div className="puesto-box disqualified"><X size={16} /></div>
                   <div style={{ flex: 1 }}>
-                    <div style={{ fontWeight: 800, color: '#991b1b' }}>{ej.nombre}</div>
-                    <div style={{ fontSize: '0.6rem', color: '#ef4444' }}>{ej.mensajeError || 'No califica'}</div>
+                    <div style={{ fontWeight: 800, color: '#da291c' }}>{ej.nombre}</div>
+                    <div style={{ fontSize: '0.6rem', color: '#da291c' }}>{ej.mensajeError || 'No califica'}</div>
                   </div>
                   <div className="stats-pill">
                     <span className="label">OPS</span>
@@ -215,11 +215,11 @@ function RankingView({ camp, data }) {
                   </div>
                   <div className="stats-pill hide-mobile">
                     <span className="label">MORA</span>
-                    <span className="value" style={{ color: '#ef4444' }}>{ej.moraTexto}</span>
+                    <span className="value" style={{ color: '#da291c' }}>{ej.moraTexto}</span>
                   </div>
                   <div style={{ textAlign: 'right', minWidth: '70px' }}>
                     <div style={{ fontSize: '0.6rem', color: 'var(--text-muted)', fontWeight: 700 }}>COLOCACIÓN</div>
-                    <div style={{ fontWeight: 800, color: '#ef4444', fontSize: '0.85rem' }}>{ej.colocacionTexto || '---'}</div>
+                    <div style={{ fontWeight: 800, color: '#da291c', fontSize: '0.85rem' }}>{ej.colocacionTexto || '---'}</div>
                   </div>
                 </div>
               );

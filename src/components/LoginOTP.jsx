@@ -129,8 +129,8 @@ export default function LoginOTP({ onLoginSuccess }) {
       </div>
 
       {error && (
-        <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#991b1b', padding: '12px 16px', borderRadius: '12px', fontSize: '0.85rem', fontWeight: 600, marginBottom: '20px', display: 'flex', alignItems: 'center', gap: '8px', animation: 'fadeIn 0.3s ease-out' }}>
-          <AlertCircle size={18} color="#ef4444" />
+        <div style={{ background: '#fef2f2', border: '1px solid #fecaca', color: '#da291c', padding: '12px 16px', borderRadius: '12px', fontSize: '0.85rem', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '8px', animation: 'shake 0.4s ease-in-out' }}>
+          <AlertCircle size={18} color="#da291c" />
           <span>{error}</span>
         </div>
       )}

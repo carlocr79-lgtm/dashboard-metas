@@ -164,12 +164,12 @@ export default function BonosTab({ data }) {
         <div className="glass-card" style={{ border: '1px solid #fca5a5' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', padding: '24px 20px', textAlign: 'center' }}>
             <div style={{ width: '64px', height: '64px', borderRadius: '50%', background: 'linear-gradient(135deg, #fee2e2, #fecaca)', display: 'flex', alignItems: 'center', justifyContent: 'center', marginBottom: '16px' }}>
-              <XCircle size={32} color="#ef4444" />
+              <XCircle size={32} color="#da291c" />
             </div>
-            <h5 style={{ fontWeight: 900, color: '#991b1b', marginBottom: '6px', fontSize: '1.1rem' }}>No Comisiona Este Periodo</h5>
+            <h5 style={{ fontWeight: 900, color: '#da291c', marginBottom: '6px', fontSize: '1.1rem' }}>No Comisiona Este Periodo</h5>
             <div style={{ background: '#fef2f2', padding: '8px 20px', borderRadius: '20px', marginBottom: '12px', display: 'inline-flex', alignItems: 'center', gap: '8px', border: '1px solid #fecaca' }}>
-              <ShieldAlert size={14} color="#ef4444" />
-              <span style={{ fontWeight: 800, color: '#991b1b', fontSize: '0.85rem' }}>Mora: {bonos.moraReal} — {bonos.estadoMora}</span>
+              <ShieldAlert size={14} color="#da291c" />
+              <span style={{ fontWeight: 800, color: '#da291c', fontSize: '0.85rem' }}>Mora: {bonos.moraReal} — {bonos.estadoMora}</span>
             </div>
             <p style={{ fontSize: '0.8rem', color: '#9ca3af', margin: 0, lineHeight: 1.6 }}>
               La mora actual excede el límite permitido para comisionar.<br />

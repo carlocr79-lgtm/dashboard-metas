@@ -87,7 +87,7 @@ export default function Header({ userData, isSyncing, lastSync, onSync, onLogout
                title="Cerrar sesión"
                style={{
                  background: '#fee2e2',
-                 color: '#ef4444',
+                 color: '#da291c',
                  padding: '8px',
                  borderRadius: '8px',
                  border: '1px solid #fecaca',

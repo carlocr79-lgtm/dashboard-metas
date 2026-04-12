@@ -5,9 +5,9 @@ import { callGAS } from '../services/api';
 // ═══ HELPERS ═══
 function getStatusColor(val) {
   const t = (val || '0').toString().toLowerCase();
-  if (t.includes('saludable') || t.includes('excelente') || t.includes('bien')) return '#10b981';
-  if (t.includes('crítico') || t.includes('mal')) return '#ef4444';
-  if (t.includes('riesgo')) return '#f59e0b';
+  if (t.includes('saludable') || t.includes('excelente') || t.includes('bien')) return '#002d72';
+  if (t.includes('crítico') || t.includes('mal')) return '#da291c';
+  if (t.includes('riesgo')) return '#3b82f6';
   const num = parseFloat(t.replace('%', '').replace(',', '.'));
   if (!isNaN(num)) {
     if (num >= 100) return '#002d72'; // Azul Corporativo Fuerte (Superó Meta)
@@ -19,9 +19,9 @@ function getStatusColor(val) {
 
 function getMoraColor(val) {
   const t = (val || '0').toString().toLowerCase();
-  if (t.includes('saludable') || t.includes('excelente') || t.includes('bien')) return '#10b981';
-  if (t.includes('crítico') || t.includes('mal')) return '#ef4444';
-  if (t.includes('riesgo')) return '#f59e0b';
+  if (t.includes('saludable') || t.includes('excelente') || t.includes('bien')) return '#002d72';
+  if (t.includes('crítico') || t.includes('mal')) return '#da291c';
+  if (t.includes('riesgo')) return '#3b82f6';
   const num = parseFloat(t.replace('%', '').replace(',', '.'));
   if (!isNaN(num)) {
     if (num <= 3) return '#002d72'; // Azul Fuerte (Mora Excelente)
