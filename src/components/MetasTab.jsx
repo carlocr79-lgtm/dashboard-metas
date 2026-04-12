@@ -248,7 +248,13 @@ function BonosModal({ bonos, data, onClose, mode }) {
                 {esMensual ? 'Total Bono Mensual' : 'Total Bono Trimestral'}
               </div>
               <div className="bonos-monto" style={{ fontSize: '1.4rem' }}>
-                {esMensual ? bonos.bonoMensualTotal : bonos.bonoTrimestralTotal}
+                {esMensual ? (() => {
+                  const parseMonto = (s) => parseFloat((s || '0').toString().replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+                  const prod = parseMonto(bonos.totalProductividadMensual);
+                  const indic = parseMonto(bonos.totalIndicadoresMensual);
+                  const total = prod + indic;
+                  return 'S/.' + total.toFixed(2).replace('.', ',');
+                })() : bonos.bonoTrimestralTotal}
               </div>
             </div>
 
@@ -263,7 +269,6 @@ function BonosModal({ bonos, data, onClose, mode }) {
                     <table className="table-premium">
                       <thead><tr><th>Indicador</th><th style={{ textAlign: 'center' }}>Avance</th><th style={{ textAlign: 'center' }}>Estado</th><th style={{ textAlign: 'center' }}>Bono S/.</th></tr></thead>
                       <tbody>
-                        <BonoRow label="Saldo Mínimo" avance={bonos.saldoMinimoAvance} estado={bonos.estadoSaldoMinimo} bono="" />
                         <BonoRow label="Saldo Mensual" avance={bonos.saldoMensualAvance} estado={bonos.estadoSaldoMensual} bono={bonos.bonoSaldoMensual} />
                         <BonoRow label="Colocación Mensual" avance={bonos.colocacionMensualAvance} estado={bonos.estadoColocacionMensual} bono={bonos.bonoColocacionMensual} />
                         <tr style={{ background: '#eff6ff' }}>
@@ -307,8 +312,8 @@ function BonosModal({ bonos, data, onClose, mode }) {
                   <table className="table-premium">
                     <thead><tr><th>Indicador</th><th style={{ textAlign: 'center' }}>Avance</th><th style={{ textAlign: 'center' }}>Estado</th><th style={{ textAlign: 'center' }}>Bono S/.</th></tr></thead>
                     <tbody>
-                      <BonoRow label="Saldo Trimestral" avance={bonos.saldoTrimestralAvance} estado={bonos.estadoSaldoTrim} bono="" />
-                      <BonoRow label="Colocación Trimestral" avance={bonos.colocacionTrimestralAvance} estado={bonos.estadoColocTrim} bono="" />
+                      <BonoRow label="Saldo Trimestral" avance={bonos.saldoTrimestralAvance} estado={bonos.estadoSaldoTrim} bono={bonos.bonoSaldoTrim} />
+                      <BonoRow label="Colocación Trimestral" avance={bonos.colocacionTrimestralAvance} estado={bonos.estadoColocTrim} bono={bonos.bonoColocTrim} />
                       <tr style={{ background: '#eff6ff' }}>
                         <td colSpan={3} style={{ fontWeight: 900, color: '#1e40af', textAlign: 'right', borderRadius: '12px 0 0 12px' }}>TOTAL TRIMESTRAL</td>
                         <td style={{ textAlign: 'center', fontWeight: 900, fontSize: '1rem', color: '#1e40af', borderRadius: '0 12px 12px 0' }}>{bonos.bonoTrimestralTotal}</td>
