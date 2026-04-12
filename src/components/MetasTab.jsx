@@ -284,10 +284,10 @@ function BonosModal({ bonos, data, onClose, mode }) {
                     <table className="table-premium">
                       <thead><tr><th>Indicador</th><th style={{ textAlign: 'center' }}>Avance</th><th style={{ textAlign: 'center' }}>Estado</th><th style={{ textAlign: 'center' }}>Bono S/.</th></tr></thead>
                       <tbody>
-                        <BonoRow label="Tasa Promedio" avance={bonos.tasaPromedioAvance} estado={getIconForAvance(bonos.tasaPromedioAvance)} bono={bonos.estadoTasaPromedio} />
-                        <BonoRow label="N° Operaciones" avance={bonos.nOperacionesAvance} estado={getIconForAvance(bonos.nOperacionesAvance)} bono={bonos.estadoOperaciones} />
-                        <BonoRow label="Clientes Nuevos" avance={bonos.clientesNuevosAvance} estado={getIconForAvance(bonos.clientesNuevosAvance)} bono={bonos.estadoNuevos} />
-                        <BonoRow label="Clientes Activos" avance={bonos.clientesActivosAvance} estado={getIconForAvance(bonos.clientesActivosAvance)} bono={bonos.estadoActivos} />
+                        <BonoRow label="Tasa Promedio" avance={bonos.tasaPromedioAvance} estado={bonos.estadoTasaPromedio} bono={bonos.bonoTasaPromedio} />
+                        <BonoRow label="N° Operaciones" avance={bonos.nOperacionesAvance} estado={bonos.estadoOperaciones} bono={bonos.bonoOperaciones} />
+                        <BonoRow label="Clientes Nuevos" avance={bonos.clientesNuevosAvance} estado={bonos.estadoNuevos} bono={bonos.bonoNuevos} />
+                        <BonoRow label="Clientes Activos" avance={bonos.clientesActivosAvance} estado={bonos.estadoActivos} bono={bonos.bonoActivos} />
                         <tr style={{ background: '#eff6ff' }}>
                           <td colSpan={3} style={{ fontWeight: 900, color: '#1e40af', textAlign: 'right', borderRadius: '12px 0 0 12px' }}>TOTAL INDICADORES</td>
                           <td style={{ textAlign: 'center', fontWeight: 900, fontSize: '1rem', color: '#1e40af', borderRadius: '0 12px 12px 0' }}>{bonos.totalIndicadoresMensual}</td>
