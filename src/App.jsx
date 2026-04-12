@@ -4,7 +4,7 @@ import './styles/variables.css';
 import './styles/components.css';
 
 import Header from './components/Header';
-import TabNavigation from './components/TabNavigation';
+import Sidebar from './components/Sidebar';
 import HomeTab from './components/HomeTab';
 import MetasTab from './components/MetasTab';
 import CampaignTab from './components/CampaignTab';
@@ -39,26 +39,32 @@ function Dashboard({ data, userEmail, setDashboardData, onLogout }) {
   }, [userEmail, setDashboardData]);
 
   return (
-    <div style={{ width: '100%', animation: 'fadeInScale 0.6s ease-out' }}>
-      <Header 
+    <div className="app-layout" style={{ animation: 'fadeInScale 0.6s ease-out' }}>
+      <Sidebar 
+        activeTab={activeTab} 
+        setActiveTab={setActiveTab} 
         userData={data} 
-        isSyncing={isSyncing} 
-        lastSync={lastSync} 
-        onSync={handleManualSync}
-        onLogout={onLogout}
       />
       
-      <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
+      <div className="main-content-area">
+        <Header 
+          userData={data} 
+          isSyncing={isSyncing} 
+          lastSync={lastSync} 
+          onSync={handleManualSync}
+          onLogout={onLogout}
+        />
 
-      <main>
-        <ErrorBoundary>
-          {activeTab === 'inicio' && <HomeTab data={data} />}
-          {activeTab === 'metas' && <MetasTab data={data} />}
-          {activeTab === 'campana' && <CampaignTab data={data} />}
-          {activeTab === 'bonos' && <BonosTab data={data} />}
-          {activeTab === 'boletas' && <BoletasTab data={data} />}
-        </ErrorBoundary>
-      </main>
+        <main>
+          <ErrorBoundary>
+            {activeTab === 'inicio' && <HomeTab data={data} />}
+            {activeTab === 'metas' && <MetasTab data={data} />}
+            {activeTab === 'campana' && <CampaignTab data={data} />}
+            {activeTab === 'bonos' && <BonosTab data={data} />}
+            {activeTab === 'boletas' && <BoletasTab data={data} />}
+          </ErrorBoundary>
+        </main>
+      </div>
     </div>
   );
 }
@@ -100,7 +106,7 @@ function App() {
       <div className="bg-shape shape-2"></div>
       <div className="bg-shape shape-3"></div>
 
-      <div className="app-container" style={{ minHeight: '100vh', padding: '16px 20px', display: 'flex', flexDirection: 'column', maxWidth: '950px', margin: '0 auto' }}>
+      <div style={{ minHeight: '100vh', display: 'flex', flexDirection: 'column', width: '100%' }}>
         {isAuthenticated ? (
           <Dashboard 
             key="dashboard" 
