@@ -250,11 +250,34 @@ function BonosModal({ bonos, data, onClose, mode }) {
               </div>
               <div className="bonos-monto" style={{ fontSize: '1.4rem' }}>
                 {esMensual ? (() => {
-                  const parseMonto = (s) => parseFloat((s || '0').toString().replace(/[^\d.,]/g, '').replace(',', '.')) || 0;
+                  const parseMonto = (s) => {
+                    if (!s || s === '-') return 0;
+                    let str = s.toString().replace(/[^\d.,-]/g, '');
+                    if (str.includes(',') && str.includes('.')) {
+                      if (str.indexOf(',') < str.lastIndexOf('.')) {
+                        str = str.replace(/,/g, '');
+                      } else {
+                        str = str.replace(/\./g, '').replace(',', '.');
+                      }
+                    } else if (str.includes(',')) {
+                      if (str.length - str.lastIndexOf(',') <= 3) {
+                        str = str.replace(',', '.');
+                      } else {
+                        str = str.replace(/,/g, '');
+                      }
+                    }
+                    return parseFloat(str) || 0;
+                  };
                   const prod = parseMonto(bonos.totalProductividadMensual);
                   const indic = parseMonto(bonos.totalIndicadoresMensual);
                   const total = prod + indic;
-                  return 'S/.' + total.toFixed(2).replace('.', ',');
+                  
+                  if (bonos.bonoMensualTotal && bonos.bonoMensualTotal !== '-') {
+                     return bonos.bonoMensualTotal;
+                  }
+
+                  let formatted = total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                  return 'S/ ' + formatted;
                 })() : bonos.bonoTrimestralTotal}
               </div>
             </div>
