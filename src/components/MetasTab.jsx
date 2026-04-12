@@ -584,7 +584,7 @@ function MensualView({ data, subView, setSubView }) {
   ];
 
   return (
-    <div style={{ animation: 'slideUp 0.35s ease-out' }}>
+    <div>
       <div className="glass-card" style={{ padding: '20px 24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
           <h5 style={{ fontWeight: 800, margin: 0, fontSize: '1rem', color: '#002d72' }}>Análisis de Avance Mensual</h5>
@@ -599,7 +599,7 @@ function MensualView({ data, subView, setSubView }) {
         </div>
 
         {/* Renderizado Premium Grid de Tarjetas */}
-        <div className="grid-cards-container">
+        <div className="grid-cards-container" style={{ animation: 'fadeIn 0.4s ease-out' }}>
           {mensualMap.map((item, i) => (
             <EnrichedCard key={i} item={item} />
           ))}
@@ -621,7 +621,7 @@ function TrimestralView({ data, subView, setSubView }) {
   ];
 
   return (
-    <div style={{ animation: 'slideUp 0.35s ease-out' }}>
+    <div>
       <div className="glass-card" style={{ padding: '20px 24px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
           <h5 style={{ fontWeight: 800, margin: 0, fontSize: '1rem', color: '#002d72' }}>Análisis Trimestral</h5>
@@ -636,7 +636,7 @@ function TrimestralView({ data, subView, setSubView }) {
         </div>
 
         {/* Renderizado Premium Grid de Tarjetas */}
-        <div className="grid-cards-container">
+        <div className="grid-cards-container" style={{ animation: 'fadeIn 0.4s ease-out' }}>
           {trimData.map((item, i) => (
             <EnrichedCard key={i} item={item} />
           ))}
@@ -692,7 +692,7 @@ function EjecutivoCard({ persona, pos, isAdmin, isOpen, onToggle }) {
   const colColor = colPctRaw >= 90 ? '#002d72' : colPctRaw >= 60 ? '#3b82f6' : '#da291c';
 
   return (
-    <div className={`ej-card${isAdmin ? ' admin-card' : ''}`}>
+    <div className={`ej-card${isAdmin ? ' admin-card' : ''}`} style={{ margin: 0, borderRadius: 0, boxShadow: 'none', border: 'none', borderBottom: '1px solid #e2e8f0' }}>
       <div className="ej-card-header" onClick={onToggle}>
         <div style={{
           width: '26px', height: '26px', borderRadius: isAdmin ? '10px' : '50%',
@@ -771,7 +771,7 @@ function GeneralView({ data, subView, setSubView }) {
   }
 
   return (
-    <div style={{ animation: 'slideUp 0.35s ease-out' }}>
+    <div>
       {/* Header con selector */}
       <div className="glass-card" style={{ padding: '12px 16px', marginBottom: '10px' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
@@ -799,24 +799,28 @@ function GeneralView({ data, subView, setSubView }) {
           <Loader2 size={32} className="spin-anim" color="var(--primary-bank)" />
           <div style={{ fontWeight: 700, color: 'var(--primary-bank)', fontSize: '0.85rem', marginTop: '12px' }}>Cargando oficina {selectedOficina}...</div>
         </div>
-      ) : esGerencia ? (
-        // GERENCIA: Lista unificada
-        [...admins, ...ejecutivos]
-          .sort((a, b) => (Number(b.opsReal) || 0) - (Number(a.opsReal) || 0))
-          .map((persona, idx) => {
-            const id = persona.nombre + idx;
-            return <EjecutivoCard key={idx} persona={persona} pos={idx + 1} isAdmin={persona.esAdmin} isOpen={openId === id} onToggle={() => setOpenId(openId === id ? null : id)} />;
-          })
       ) : (
-        <>
-          {/* Admin separado */}
-          {admins.length > 0 && <EjecutivoCard persona={admins[0]} pos={0} isAdmin={true} isOpen={openId === 'admin_0'} onToggle={() => setOpenId(openId === 'admin_0' ? null : 'admin_0')} />}
-          {/* Ejecutivos */}
-          {ejecutivos.map((ej, idx) => {
-            const id = ej.nombre + idx;
-            return <EjecutivoCard key={idx} persona={ej} pos={idx + 1} isAdmin={false} isOpen={openId === id} onToggle={() => setOpenId(openId === id ? null : id)} />;
-          })}
-        </>
+        <div className="glass-card" style={{ padding: 0, overflow: 'hidden', animation: 'fadeIn 0.4s ease-out' }}>
+          {esGerencia ? (
+            // GERENCIA: Lista unificada
+            [...admins, ...ejecutivos]
+              .sort((a, b) => (Number(b.opsReal) || 0) - (Number(a.opsReal) || 0))
+              .map((persona, idx) => {
+                const id = persona.nombre + idx;
+                return <EjecutivoCard key={idx} persona={persona} pos={idx + 1} isAdmin={persona.esAdmin} isOpen={openId === id} onToggle={() => setOpenId(openId === id ? null : id)} />;
+              })
+          ) : (
+            <>
+              {/* Admin separado */}
+              {admins.length > 0 && <EjecutivoCard persona={admins[0]} pos={0} isAdmin={true} isOpen={openId === 'admin_0'} onToggle={() => setOpenId(openId === 'admin_0' ? null : 'admin_0')} />}
+              {/* Ejecutivos */}
+              {ejecutivos.map((ej, idx) => {
+                const id = ej.nombre + idx;
+                return <EjecutivoCard key={idx} persona={ej} pos={idx + 1} isAdmin={false} isOpen={openId === id} onToggle={() => setOpenId(openId === id ? null : id)} />;
+              })}
+            </>
+          )}
+        </div>
       )}
     </div>
   );
