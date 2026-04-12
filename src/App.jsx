@@ -14,7 +14,7 @@ import LoginOTP from './components/LoginOTP';
 import ErrorBoundary from './components/ErrorBoundary';
 import { callGAS } from './services/api';
 
-function Dashboard({ data, userEmail, setDashboardData }) {
+function Dashboard({ data, userEmail, setDashboardData, onLogout }) {
   const [activeTab, setActiveTab] = useState('inicio');
   const [isSyncing, setIsSyncing] = useState(false);
   const [lastSync, setLastSync] = useState(
@@ -45,6 +45,7 @@ function Dashboard({ data, userEmail, setDashboardData }) {
         isSyncing={isSyncing} 
         lastSync={lastSync} 
         onSync={handleManualSync}
+        onLogout={onLogout}
       />
       
       <TabNavigation activeTab={activeTab} setActiveTab={setActiveTab} />
@@ -66,9 +67,28 @@ function App() {
   const [dashboardData, setDashboardData] = useState(null);
   const [userEmail, setUserEmail] = useState('');
 
+  // Auto-login al recargar (persistencia en sesión)
+  useEffect(() => {
+    const saved = sessionStorage.getItem('metas_session');
+    if (saved) {
+      try {
+        const parsed = JSON.parse(saved);
+        setDashboardData(parsed.data);
+        setUserEmail(parsed.email);
+      } catch(e) {}
+    }
+  }, []);
+
   const handleLoginSuccess = (data, email) => {
     setDashboardData(data);
     setUserEmail(email);
+    sessionStorage.setItem('metas_session', JSON.stringify({ data, email }));
+  };
+
+  const handleLogout = () => {
+    setDashboardData(null);
+    setUserEmail('');
+    sessionStorage.removeItem('metas_session');
   };
 
   // Si dashboardData existe, el usuario está autenticado
@@ -87,6 +107,7 @@ function App() {
             data={dashboardData} 
             userEmail={userEmail} 
             setDashboardData={setDashboardData}
+            onLogout={handleLogout}
           />
         ) : (
           <LoginOTP key="login" onLoginSuccess={handleLoginSuccess} />

@@ -1,6 +1,6 @@
-import { Clock, RefreshCw, BadgeInfo, Star, Building2 } from 'lucide-react';
+import { Clock, RefreshCw, BadgeInfo, Star, Building2, LogOut } from 'lucide-react';
 
-export default function Header({ userData, isSyncing, lastSync, onSync }) {
+export default function Header({ userData, isSyncing, lastSync, onSync, onLogout }) {
   if (!userData) return null;
 
   // Extraer iniciales (ej: Carlos Lopez => CL)
@@ -42,7 +42,7 @@ export default function Header({ userData, isSyncing, lastSync, onSync }) {
           </div>
         </div>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center' }}>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
          <button 
            onClick={onSync}
            disabled={isSyncing}
@@ -78,6 +78,30 @@ export default function Header({ userData, isSyncing, lastSync, onSync }) {
             <RefreshCw size={14} className={isSyncing ? "spin-anim" : ""} style={{marginRight: 6}} /> 
             {isSyncing ? 'Sincronizando...' : `Actualizado: ${lastSync}`}
          </button>
+         
+         {onLogout && (
+           <button
+             onClick={onLogout}
+             title="Cerrar sesión"
+             style={{
+               background: '#fee2e2',
+               color: '#ef4444',
+               padding: '6px 12px',
+               borderRadius: '8px',
+               border: '1px solid #fecaca',
+               cursor: 'pointer',
+               display: 'flex',
+               alignItems: 'center',
+               transition: 'all 0.2s',
+               fontSize: '0.75rem',
+               fontWeight: 700
+             }}
+             onMouseEnter={(e) => e.currentTarget.style.background = '#fecaca'}
+             onMouseLeave={(e) => e.currentTarget.style.background = '#fee2e2'}
+           >
+             <LogOut size={14} style={{marginRight: 4}}/> Salir
+           </button>
+         )}
       </div>
     </header>
   );
