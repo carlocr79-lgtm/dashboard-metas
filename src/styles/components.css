@@ -706,48 +706,42 @@ html {
   padding: 6px 14px;
 }
 
-/* DESKTOP SIDEBAR */
+/* DESKTOP SIDEBAR MINIMALISTA */
 @media (min-width: 768px) {
   .sidebar-container {
-    width: 250px;
+    width: 90px;
     height: 100vh;
     position: sticky;
     top: 0;
     flex-direction: column;
     justify-content: flex-start;
-    padding: 24px 16px;
+    align-items: center;
+    padding: 24px 8px;
     border-top: none;
     border-right: 1px solid var(--glass-border);
     box-shadow: 4px 0 24px rgba(0, 45, 114, 0.03);
   }
 
   .sidebar-brand {
-    display: flex;
-    align-items: center;
-    gap: 12px;
-    margin-bottom: 32px;
-    padding-left: 8px;
+    display: none;
   }
 
   .sidebar-profile {
-    display: block;
-    background: #f8fafc;
-    border: 1px solid #e2e8f0;
-    border-radius: 14px;
-    padding: 16px;
-    margin-bottom: 32px;
+    display: none;
   }
 
   .sidebar-nav {
     flex-direction: column;
-    gap: 8px;
+    gap: 12px;
+    width: 100%;
   }
 
   .sidebar-btn {
-    flex-direction: row;
-    justify-content: flex-start;
-    padding: 12px 16px;
-    font-size: 0.85rem;
+    flex-direction: column;
+    justify-content: center;
+    padding: 12px 0;
+    font-size: 0.65rem;
+    width: 100%;
   }
 
   .sidebar-btn:hover {
@@ -755,14 +749,14 @@ html {
   }
 
   .sidebar-btn.active {
-    background: var(--primary-bank);
-    color: white;
-    box-shadow: 0 8px 20px rgba(0, 45, 114, 0.2);
+    background: transparent;
+    color: var(--primary-bank);
+    box-shadow: none;
   }
   
   .sidebar-btn.active .icon-wrapper {
-    background: transparent;
-    padding: 0;
+    background: #eff6ff;
+    padding: 8px 16px;
   }
 }
 
