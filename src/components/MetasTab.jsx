@@ -607,7 +607,7 @@ function TrimestralView({ data }) {
           <h5 style={{ fontWeight: 800, margin: 0, fontSize: '1rem', color: '#002d72' }}>Análisis Trimestral</h5>
           {bonos && (
             <button onClick={() => setShowBonos(true)} className="btn-ver-bonos-compact">
-              <Eye size={14} /> Ver Bonos Trimestrales
+              <Eye size={14} /> Ver Bonos
             </button>
           )}
         </div>
@@ -834,10 +834,10 @@ export default function MetasTab({ data }) {
           border-radius: 8px !important;
         }
         .sub-nav-btn {
-          padding: 6px 14px !important;
-          font-size: 0.75rem !important;
-          gap: 6px !important;
-          border-radius: 8px !important;
+          padding: 4px 10px !important;
+          font-size: 0.68rem !important;
+          gap: 4px !important;
+          border-radius: 6px !important;
         }
         .sub-nav-wrapper {
           gap: 6px !important;
