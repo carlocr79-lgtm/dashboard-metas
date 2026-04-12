@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Calendar, TrendingUp, Users, ShieldAlert, Coins, ChevronDown, ChevronUp, Building2, Loader2 } from 'lucide-react';
 import { callGAS } from '../services/api';
 
@@ -60,8 +60,17 @@ function GaugeRing({ value, color }) {
   const circum = 2 * Math.PI * r;
   const pctNum = parseFloat((value || '0').toString().replace('%', '').replace(',', '.')) || 0;
   const pctClamped = Math.min(Math.max(pctNum, 0), 100);
-  const dashOffset = circum - (pctClamped / 100) * circum;
   const pctDisplay = Math.round(pctNum);
+
+  // Estado para la animación de inicio a fin
+  const [offset, setOffset] = useState(circum);
+
+  useEffect(() => {
+    const finalOffset = circum - (pctClamped / 100) * circum;
+    // Un pequeño retraso permite que React pinte el frame inicial en 0 antes de transicionar
+    const timer = setTimeout(() => setOffset(finalOffset), 50);
+    return () => clearTimeout(timer);
+  }, [pctClamped, circum]);
 
   return (
     <div style={{ display: 'flex', justifyContent: 'center' }}>
@@ -69,8 +78,8 @@ function GaugeRing({ value, color }) {
         <svg viewBox="0 0 36 36" style={{ transform: 'rotate(-90deg)', width: '100%', height: '100%' }}>
           <circle cx="18" cy="18" r={r} fill="none" stroke="#f1f5f9" strokeWidth="3" />
           <circle cx="18" cy="18" r={r} fill="none" stroke={color} strokeWidth="3"
-            strokeDasharray={circum} strokeDashoffset={dashOffset} strokeLinecap="round" 
-            style={{ transition: 'stroke-dashoffset 1s ease-out' }} />
+            strokeDasharray={circum} strokeDashoffset={offset} strokeLinecap="round" 
+            style={{ transition: 'stroke-dashoffset 1.2s cubic-bezier(0.22, 1, 0.36, 1)' }} />
         </svg>
         <div style={{
           position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
