@@ -10,9 +10,9 @@ function getStatusColor(val) {
   if (t.includes('riesgo')) return '#f59e0b';
   const num = parseFloat(t.replace('%', '').replace(',', '.'));
   if (!isNaN(num)) {
-    if (num >= 100) return '#10b981';
-    if (num >= 80) return '#f59e0b';
-    return '#ef4444';
+    if (num >= 100) return '#002d72'; // Azul Corporativo Fuerte (Superó Meta)
+    if (num >= 80) return '#3b82f6';  // Azul Claro (Progreso Seguro)
+    return '#da291c';                 // Rojo Corporativo (Riesgo)
   }
   return 'var(--primary-bank)';
 }
@@ -24,9 +24,9 @@ function getMoraColor(val) {
   if (t.includes('riesgo')) return '#f59e0b';
   const num = parseFloat(t.replace('%', '').replace(',', '.'));
   if (!isNaN(num)) {
-    if (num <= 3) return '#10b981';
-    if (num <= 5) return '#f59e0b';
-    return '#ef4444';
+    if (num <= 3) return '#002d72'; // Azul Fuerte (Mora Excelente)
+    if (num <= 5) return '#3b82f6'; // Azul Claro (Mora Aceptable)
+    return '#da291c';               // Rojo (Mora Peligro)
   }
   return 'var(--primary-bank)';
 }
@@ -59,19 +59,26 @@ function GaugeRing({ value, color }) {
   const r = 14;
   const circum = 2 * Math.PI * r;
   const pctNum = parseFloat((value || '0').toString().replace('%', '').replace(',', '.')) || 0;
-  const pctClamped = Math.min(pctNum, 100);
+  const pctClamped = Math.min(Math.max(pctNum, 0), 100);
   const dashOffset = circum - (pctClamped / 100) * circum;
   const pctDisplay = Math.round(pctNum);
 
   return (
-    <div className="gauge-cell">
-      <div className="gauge-ring">
-        <svg viewBox="0 0 36 36">
-          <circle className="gauge-bg" cx="18" cy="18" r={r} />
-          <circle className="gauge-fill" cx="18" cy="18" r={r} stroke={color}
-            strokeDasharray={circum} strokeDashoffset={dashOffset} />
+    <div style={{ display: 'flex', justifyContent: 'center' }}>
+      <div style={{ position: 'relative', width: '38px', height: '38px', filter: `drop-shadow(0 2px 4px ${color}30)` }}>
+        <svg viewBox="0 0 36 36" style={{ transform: 'rotate(-90deg)', width: '100%', height: '100%' }}>
+          <circle cx="18" cy="18" r={r} fill="none" stroke="#f1f5f9" strokeWidth="3" />
+          <circle cx="18" cy="18" r={r} fill="none" stroke={color} strokeWidth="3"
+            strokeDasharray={circum} strokeDashoffset={dashOffset} strokeLinecap="round" 
+            style={{ transition: 'stroke-dashoffset 1s ease-out' }} />
         </svg>
-        <div className="gauge-text" style={{ color }}>{pctDisplay}%</div>
+        <div style={{
+          position: 'absolute', top: 0, left: 0, width: '100%', height: '100%',
+          display: 'flex', alignItems: 'center', justifyContent: 'center',
+          fontSize: '0.65rem', fontWeight: 900, color: color, letterSpacing: '-0.5px'
+        }}>
+          {pctDisplay}%
+        </div>
       </div>
     </div>
   );
