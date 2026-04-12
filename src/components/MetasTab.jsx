@@ -134,10 +134,11 @@ function IndicatorBadge({ icon: Icon, label, situation, sitColor, meta, real, re
 }
 
 // ═══ MODAL DE BONOS PREMIUM ═══
-function BonosModal({ bonos, onClose, mode }) {
-  if (!bonos) return null;
+function BonosModal({ bonos, data, onClose, mode }) {
+  if (!bonos || !data) return null;
 
   const comisiona = bonos.estadoMora && bonos.estadoMora.toLowerCase().includes('comisiona') && !bonos.estadoMora.toLowerCase().includes('no comisiona');
+  const smColor = getStatusColor(data.sm3);
   const esMensual = mode === 'mensual';
   const titulo = esMensual ? 'Bonos Mensuales' : 'Bonos Trimestrales';
   const subtitulo = esMensual ? 'Productividad e Indicadores del mes' : 'Productividad del trimestre';
@@ -190,17 +191,31 @@ function BonosModal({ bonos, onClose, mode }) {
           </button>
         </div>
 
-        {/* Estado de Mora */}
-        <div style={{
-          background: comisiona ? '#eff6ff' : '#fef2f2',
-          border: `1px solid ${comisiona ? '#bfdbfe' : '#fecaca'}`,
-          borderRadius: '10px', padding: '10px 16px', marginBottom: '16px',
-          display: 'flex', alignItems: 'center', gap: '10px'
-        }}>
-          {comisiona ? <CheckCircle size={16} color="#002d72" /> : <XCircle size={16} color="#da291c" />}
-          <span style={{ fontWeight: 800, color: comisiona ? '#002d72' : '#da291c', fontSize: '0.82rem' }}>
-            Mora: {bonos.moraReal} — {bonos.estadoMora}
-          </span>
+        {/* Estado de Mora y SM */}
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px' }}>
+          <div style={{
+            background: comisiona ? '#eff6ff' : '#fef2f2',
+            border: `1px solid ${comisiona ? '#bfdbfe' : '#fecaca'}`,
+            borderRadius: '10px', padding: '10px 16px', flex: 1,
+            display: 'flex', alignItems: 'center', gap: '8px', minWidth: '200px'
+          }}>
+            {comisiona ? <CheckCircle size={16} color="#002d72" /> : <XCircle size={16} color="#da291c" />}
+            <span style={{ fontWeight: 800, color: comisiona ? '#002d72' : '#da291c', fontSize: '0.8rem' }}>
+              Mora: {bonos.moraReal} — {bonos.estadoMora}
+            </span>
+          </div>
+
+          <div style={{
+            background: smColor + '10',
+            border: `1px solid ${smColor}40`,
+            borderRadius: '10px', padding: '10px 16px', flex: 1,
+            display: 'flex', alignItems: 'center', gap: '8px', minWidth: '160px'
+          }}>
+            <Coins size={16} color={smColor} />
+            <span style={{ fontWeight: 800, color: smColor, fontSize: '0.8rem' }}>
+              SM: {data.sm2} / C: {data.sm3}
+            </span>
+          </div>
         </div>
 
         {!comisiona ? (
@@ -317,12 +332,11 @@ function MensualView({ data }) {
       <div className="glass-card">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'nowrap', gap: '8px', marginBottom: '12px' }}>
           <h5 style={{ fontWeight: 800, margin: 0, whiteSpace: 'nowrap', fontSize: '0.95rem' }}>Avance Mensual</h5>
-          <div style={{ display: 'flex', gap: '6px', flexWrap: 'nowrap', flexShrink: 0 }}>
-            <IndicatorBadge icon={ShieldAlert} label="Mora" situation={data.m2}
-              sitColor={moraColor} meta={data.m0} real={data.m1} realColor={moraColor} />
-            <IndicatorBadge icon={Coins} label="SM" situation={data.sm3}
-              sitColor={smColor} meta={data.sm1} real={data.sm2} realColor={smColor} />
-          </div>
+          {bonos && (
+            <button onClick={() => setShowBonos(true)} className="btn-ver-bonos-compact">
+              <DollarSign size={14} /> Ver Bonos Mensuales
+            </button>
+          )}
         </div>
         <div style={{ overflowX: 'auto' }}>
           <table className="table-premium">
@@ -349,14 +363,8 @@ function MensualView({ data }) {
             </tbody>
           </table>
         </div>
-        {/* Botón Ver Bonos */}
-        {bonos && (
-          <button onClick={() => setShowBonos(true)} className="btn-ver-bonos">
-            <DollarSign size={14} /> Ver Bonos Mensuales
-          </button>
-        )}
       </div>
-      {showBonos && <BonosModal bonos={bonos} mode="mensual" onClose={() => setShowBonos(false)} />}
+      {showBonos && <BonosModal bonos={bonos} data={data} mode="mensual" onClose={() => setShowBonos(false)} />}
     </div>
   );
 }
@@ -378,12 +386,11 @@ function TrimestralView({ data }) {
       <div className="glass-card">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'nowrap', gap: '8px', marginBottom: '12px' }}>
           <h5 style={{ fontWeight: 800, margin: 0, whiteSpace: 'nowrap', fontSize: '0.95rem' }}>Metas Trimestrales</h5>
-          <div style={{ display: 'flex', gap: '6px', flexWrap: 'nowrap', flexShrink: 0 }}>
-            <IndicatorBadge icon={ShieldAlert} label="Mora" situation={data.tm2}
-              sitColor={moraTriColor} meta={data.tm0} real={data.tm1} realColor={moraTriColor} />
-            <IndicatorBadge icon={Coins} label="SM" situation={data.sm3}
-              sitColor={smTriColor} meta={data.sm1} real={data.sm2} realColor={smTriColor} />
-          </div>
+          {bonos && (
+            <button onClick={() => setShowBonos(true)} className="btn-ver-bonos-compact">
+              <DollarSign size={14} /> Ver Bonos Trimestrales
+            </button>
+          )}
         </div>
         <div style={{ overflowX: 'auto' }}>
           <table className="table-premium">
@@ -410,14 +417,8 @@ function TrimestralView({ data }) {
             </tbody>
           </table>
         </div>
-        {/* Botón Ver Bonos Trimestrales */}
-        {bonos && (
-          <button onClick={() => setShowBonos(true)} className="btn-ver-bonos">
-            <DollarSign size={14} /> Ver Bonos Trimestrales
-          </button>
-        )}
       </div>
-      {showBonos && <BonosModal bonos={bonos} mode="trimestral" onClose={() => setShowBonos(false)} />}
+      {showBonos && <BonosModal bonos={bonos} data={data} mode="trimestral" onClose={() => setShowBonos(false)} />}
     </div>
   );
 }
