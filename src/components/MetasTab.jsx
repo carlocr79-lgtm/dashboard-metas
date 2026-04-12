@@ -390,57 +390,128 @@ function BonosModal({ bonos, data, onClose, mode }) {
   );
 }
 
+// ═══ COMPONENTE FILA ENRIQUECIDA (PREMIUM ENRICHED ROW) ═══
+function EnrichedRow({ item }) {
+  const Icon = item.icon || TrendingUp;
+  const color = getStatusColor(item.s);
+
+  // Lógica de cálculo matemático exacto para diferencias
+  const parseNum = (s) => {
+    if (!s || s === '-') return 0;
+    let str = s.toString().replace(/[^\d.,-]/g, '');
+    if (str.includes(',') && str.includes('.')) {
+      if (str.indexOf(',') < str.lastIndexOf('.')) str = str.replace(/,/g, '');
+      else str = str.replace(/\./g, '').replace(',', '.');
+    } else if (str.includes(',')) {
+      if (str.length - str.lastIndexOf(',') <= 3) str = str.replace(',', '.');
+      else str = str.replace(/,/g, '');
+    }
+    return parseFloat(str) || 0;
+  };
+
+  const metaNum = parseNum(item.m);
+  const realNum = parseNum(item.r);
+  const diff = realNum - metaNum;
+  const pctReal = metaNum === 0 ? (realNum > 0 ? 100 : 0) : Math.min((realNum / metaNum) * 100, 100);
+
+  let diffText = '';
+  let diffColor = '#64748b'; // Gris
+  let formattedDiff = Math.abs(diff).toLocaleString('es-PE', { minimumFractionDigits: item.type === 'number' ? 0 : 2, maximumFractionDigits: item.type === 'number' ? 0 : 2 });
+
+  if (item.type === 'money') formattedDiff = 'S/. ' + formattedDiff;
+  if (item.type === 'percent') formattedDiff = formattedDiff + '%';
+  
+  if (diff >= 0) {
+    diffText = `🔥 Superado (+${formattedDiff})`;
+    diffColor = '#059669'; // Verde Esmeralda
+  } else {
+    diffText = `⚠️ Faltan ${formattedDiff}`;
+    diffColor = '#da291c'; // Rojo
+  }
+
+  // Si es %, el Faltan suena raro, lo cambiamos:
+  if (item.type === 'percent' && diff < 0) diffText = `⚠️ Debajo por ${formattedDiff}`;
+
+  if (!item.m || item.m === '-' || !item.r || item.r === '-') {
+    diffText = 'Pendiente / En revisión';
+    diffColor = '#94a3b8';
+  }
+
+  // Textos para Badges
+  const sNum = parseNum(item.s);
+  let statusText = 'En Riesgo';
+  let badgeClass = 'badge-soft-warning';
+  if (sNum >= 100) { statusText = 'Excelente'; badgeClass = 'badge-soft-success'; }
+  else if (sNum < 80) { statusText = 'Crítico'; badgeClass = 'badge-soft-danger'; }
+
+  return (
+    <div className="enriched-row">
+      {/* Columna Izquierda: Icono y Nombre */}
+      <div style={{ flex: '1 1 150px', display: 'flex', alignItems: 'center', gap: '12px', minWidth: '150px' }}>
+        <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: `${color}10`, display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${color}20`, flexShrink: 0 }}>
+          <Icon size={20} color={color} />
+        </div>
+        <div>
+          <div style={{ fontWeight: 800, color: '#1e293b', fontSize: '0.85rem' }}>{item.l}</div>
+          <div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 600 }}>
+            OBJETIVO: {item.m}
+          </div>
+        </div>
+      </div>
+
+      {/* Columna Central: Real + Diferencia y Barra de Progreso */}
+      <div style={{ flex: '1 1 200px', display: 'flex', flexDirection: 'column', justifyContent: 'center', minWidth: '200px', paddingRight: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '6px', flexWrap: 'wrap' }}>
+           <span style={{ fontSize: '1.05rem', fontWeight: 900, color: color }}>{item.r}</span>
+           <span style={{ fontSize: '0.6rem', fontWeight: 800, color: diffColor, background: diffColor+'15', padding: '2px 8px', borderRadius: '8px' }}>{diffText}</span>
+        </div>
+        <div className="progress-bar-compact" style={{ height: '5px', background: '#e2e8f0', borderRadius: '4px', overflow: 'hidden' }}>
+            <div className="progress-bar-fill" style={{ width: `${pctReal}%`, background: color, height: '100%', transition: 'width 1s cubic-bezier(0.16, 1, 0.3, 1)' }} />
+        </div>
+      </div>
+
+      {/* Columna Derecha: Anillo y Status */}
+      <div style={{ width: '130px', display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: '10px' }}>
+         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-end', gap: '4px' }}>
+            <span className={`badge-premium ${badgeClass}`}>{statusText}</span>
+         </div>
+         <GaugeRing value={item.s} color={color} />
+      </div>
+    </div>
+  );
+}
+
 // ═══ SUB-VISTA: MENSUAL ═══
 function MensualView({ data }) {
   const [showBonos, setShowBonos] = useState(false);
-  const moraColor = getMoraColor(data.m2);
-  const smColor = getStatusColor(data.sm3);
   const bonos = data.bonos;
 
   const mensualMap = [
-    { l: 'Saldo Cartera', m: data.sc1, r: data.sc2, s: data.sc3 },
-    { l: 'Colocaciones', m: data.col1, r: data.col2, s: data.col3 },
-    { l: 'Tasa Promedio', m: data.t1, r: data.t2, s: data.t3 },
-    { l: 'Operaciones', m: data.o1, r: data.o2, s: data.o3 },
-    { l: 'Clt. Nuevos', m: data.cn1, r: data.cn2, s: data.cn3 },
-    { l: 'Clt. Activos', m: data.ca1, r: data.ca2, s: data.ca3 }
+    { l: 'Saldo Cartera', m: data.sc1, r: data.sc2, s: data.sc3, type: 'money', icon: DollarSign },
+    { l: 'Colocaciones', m: data.col1, r: data.col2, s: data.col3, type: 'money', icon: TrendingUp },
+    { l: 'Tasa Promedio', m: data.t1, r: data.t2, s: data.t3, type: 'percent', icon: BarChart3 },
+    { l: 'Operaciones', m: data.o1, r: data.o2, s: data.o3, type: 'number', icon: ClipboardList },
+    { l: 'Clt. Nuevos', m: data.cn1, r: data.cn2, s: data.cn3, type: 'number', icon: Users },
+    { l: 'Clt. Activos', m: data.ca1, r: data.ca2, s: data.ca3, type: 'number', icon: CheckCircle }
   ];
 
   return (
     <div style={{ animation: 'slideUp 0.35s ease-out' }}>
-      <div className="glass-card">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'nowrap', gap: '8px', marginBottom: '12px' }}>
-          <h5 style={{ fontWeight: 800, margin: 0, whiteSpace: 'nowrap', fontSize: '0.95rem' }}>Avance Mensual</h5>
+      <div className="glass-card" style={{ padding: '20px 24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'nowrap', gap: '8px', marginBottom: '16px' }}>
+          <h5 style={{ fontWeight: 800, margin: 0, fontSize: '1rem', color: '#002d72' }}>Análisis de Avance Mensual</h5>
           {bonos && (
             <button onClick={() => setShowBonos(true)} className="btn-ver-bonos-compact">
-              <DollarSign size={14} /> Ver Bonos Mensuales
+              <DollarSign size={14} /> Ver Bonos
             </button>
           )}
         </div>
-        <div style={{ overflowX: 'auto' }}>
-          <table className="table-premium">
-            <thead>
-              <tr>
-                <th>Indicador</th>
-                <th style={{ textAlign: 'center' }}>Meta</th>
-                <th style={{ textAlign: 'center' }}>Real</th>
-                <th style={{ textAlign: 'center' }}>Cumplimiento</th>
-              </tr>
-            </thead>
-            <tbody>
-              {mensualMap.map((item, i) => {
-                const color = getStatusColor(item.s);
-                return (
-                  <tr key={i}>
-                    <td>{item.l}</td>
-                    <td className="metric-val" style={{ textAlign: 'center' }}>{item.m}</td>
-                    <td className="real-val" style={{ textAlign: 'center', color }}>{item.r}</td>
-                    <td style={{ textAlign: 'center' }}><GaugeRing value={item.s} color={color} /></td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+        
+        {/* Renderizado Premium por Tarjetas */}
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {mensualMap.map((item, i) => (
+            <EnrichedRow key={i} item={item} />
+          ))}
         </div>
       </div>
       {showBonos && <BonosModal bonos={bonos} data={data} mode="mensual" onClose={() => setShowBonos(false)} />}
@@ -451,50 +522,30 @@ function MensualView({ data }) {
 // ═══ SUB-VISTA: TRIMESTRAL ═══
 function TrimestralView({ data }) {
   const [showBonos, setShowBonos] = useState(false);
-  const moraTriColor = getMoraColor(data.tm2);
-  const smTriColor = getStatusColor(data.sm3);
   const bonos = data.bonos;
 
   const trimData = [
-    { l: 'Saldo Cartera', m: data.ts1, r: data.ts2, s: data.ts3 },
-    { l: 'Colocaciones', m: data.tc1, r: data.tc2, s: data.tc3 }
+    { l: 'Saldo Cartera', m: data.ts1, r: data.ts2, s: data.ts3, type: 'money', icon: DollarSign },
+    { l: 'Colocaciones', m: data.tc1, r: data.tc2, s: data.tc3, type: 'money', icon: TrendingUp }
   ];
 
   return (
     <div style={{ animation: 'slideUp 0.35s ease-out' }}>
-      <div className="glass-card">
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'nowrap', gap: '8px', marginBottom: '12px' }}>
-          <h5 style={{ fontWeight: 800, margin: 0, whiteSpace: 'nowrap', fontSize: '0.95rem' }}>Metas Trimestrales</h5>
+      <div className="glass-card" style={{ padding: '20px 24px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'nowrap', gap: '8px', marginBottom: '16px' }}>
+          <h5 style={{ fontWeight: 800, margin: 0, fontSize: '1rem', color: '#002d72' }}>Análisis Trimestral</h5>
           {bonos && (
             <button onClick={() => setShowBonos(true)} className="btn-ver-bonos-compact">
               <DollarSign size={14} /> Ver Bonos Trimestrales
             </button>
           )}
         </div>
-        <div style={{ overflowX: 'auto' }}>
-          <table className="table-premium">
-            <thead>
-              <tr>
-                <th>Indicador</th>
-                <th style={{ textAlign: 'center' }}>Meta</th>
-                <th style={{ textAlign: 'center' }}>Real</th>
-                <th style={{ textAlign: 'center' }}>Situación</th>
-              </tr>
-            </thead>
-            <tbody>
-              {trimData.map((item, i) => {
-                const color = getStatusColor(item.s);
-                return (
-                  <tr key={i}>
-                    <td>{item.l}</td>
-                    <td className="metric-val" style={{ textAlign: 'center' }}>{item.m}</td>
-                    <td className="real-val" style={{ textAlign: 'center', color }}>{item.r}</td>
-                    <td style={{ textAlign: 'center' }}><GaugeRing value={item.s} color={color} /></td>
-                  </tr>
-                );
-              })}
-            </tbody>
-          </table>
+
+        {/* Renderizado Premium por Tarjetas */}
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          {trimData.map((item, i) => (
+            <EnrichedRow key={i} item={item} />
+          ))}
         </div>
       </div>
       {showBonos && <BonosModal bonos={bonos} data={data} mode="trimestral" onClose={() => setShowBonos(false)} />}
@@ -684,6 +735,28 @@ export default function MetasTab({ data }) {
 
   return (
     <div style={{ animation: 'fadeIn 0.5s ease-out' }}>
+      <style>{`
+        .enriched-row {
+          display: flex;
+          flex-wrap: wrap;
+          align-items: center;
+          background: rgba(255, 255, 255, 0.45);
+          border: 1px solid #e2e8f0;
+          border-radius: 12px;
+          padding: 12px 16px;
+          margin-bottom: 10px;
+          transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+        .enriched-row:hover {
+          background: #ffffff;
+          border-color: #cbd5e1;
+          box-shadow: 0 4px 16px rgba(0, 45, 114, 0.06);
+          transform: translateY(-2px);
+        }
+        .enriched-row:last-child {
+          margin-bottom: 0;
+        }
+      `}</style>
       {/* Sub-navegación */}
       <div className="glass-card" style={{ padding: '8px 12px' }}>
         <div className="sub-nav-wrapper">
