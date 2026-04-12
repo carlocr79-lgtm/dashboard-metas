@@ -42,66 +42,68 @@ export default function Header({ userData, isSyncing, lastSync, onSync, onLogout
           </div>
         </div>
       </div>
-      <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-         <button 
-           onClick={onSync}
-           disabled={isSyncing}
-           style={{ 
-             background: isSyncing ? '#f1f5f9' : 'transparent', 
-             color: isSyncing ? '#94a3b8' : '#64748b', 
-             padding: '6px 12px', 
-             borderRadius: '8px', 
-             fontWeight: 600, 
-             fontSize: '0.75rem', 
-             display: 'flex', 
-             alignItems: 'center',
-             border: '1px solid',
-             borderColor: isSyncing ? '#e2e8f0' : 'transparent',
-             cursor: isSyncing ? 'not-allowed' : 'pointer',
-             transition: 'all 0.2s',
-           }}
-           onMouseEnter={(e) => {
-             if (!isSyncing) {
-               e.currentTarget.style.background = '#f8fafc';
-               e.currentTarget.style.borderColor = '#e2e8f0';
-               e.currentTarget.style.color = '#334155';
-             }
-           }}
-           onMouseLeave={(e) => {
-             if (!isSyncing) {
-               e.currentTarget.style.background = 'transparent';
-               e.currentTarget.style.borderColor = 'transparent';
-               e.currentTarget.style.color = '#64748b';
-             }
-           }}
-         >
-            <RefreshCw size={14} className={isSyncing ? "spin-anim" : ""} style={{marginRight: 6}} /> 
-            {isSyncing ? 'Sincronizando...' : `Actualizado: ${lastSync}`}
-         </button>
+      <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+         <div style={{ fontSize: '0.7rem', color: '#94a3b8', fontWeight: 600, display: 'flex', alignItems: 'center', gap: '4px' }}>
+            Actualizado <span style={{ fontWeight: 800, color: '#64748b' }}>{lastSync}</span>
+         </div>
          
-         {onLogout && (
-           <button
-             onClick={onLogout}
-             title="Cerrar sesión"
-             style={{
-               background: '#fee2e2',
-               color: '#ef4444',
-               padding: '6px 12px',
-               borderRadius: '8px',
-               border: '1px solid #fecaca',
-               cursor: 'pointer',
+         <div style={{ display: 'flex', gap: '6px' }}>
+           <button 
+             onClick={onSync}
+             title="Sincronizar datos"
+             disabled={isSyncing}
+             style={{ 
+               background: isSyncing ? '#eff6ff' : '#f8fafc', 
+               color: isSyncing ? '#3b82f6' : '#64748b', 
+               padding: '8px', 
+               borderRadius: '8px', 
+               border: '1px solid',
+               borderColor: isSyncing ? '#bfdbfe' : '#e2e8f0',
+               cursor: isSyncing ? 'not-allowed' : 'pointer',
+               transition: 'all 0.2s',
                display: 'flex',
                alignItems: 'center',
-               transition: 'all 0.2s',
-               fontSize: '0.75rem',
-               fontWeight: 700
+               justifyContent: 'center'
              }}
-             onMouseEnter={(e) => e.currentTarget.style.background = '#fecaca'}
-             onMouseLeave={(e) => e.currentTarget.style.background = '#fee2e2'}
+             onMouseEnter={(e) => {
+               if (!isSyncing) {
+                 e.currentTarget.style.background = '#f1f5f9';
+                 e.currentTarget.style.color = '#334155';
+               }
+             }}
+             onMouseLeave={(e) => {
+               if (!isSyncing) {
+                 e.currentTarget.style.background = '#f8fafc';
+                 e.currentTarget.style.color = '#64748b';
+               }
+             }}
            >
-             <LogOut size={14} style={{marginRight: 4}}/> Salir
+              <RefreshCw size={16} className={isSyncing ? "spin-anim" : ""} /> 
            </button>
-         )}
+           
+           {onLogout && (
+             <button
+               onClick={onLogout}
+               title="Cerrar sesión"
+               style={{
+                 background: '#fee2e2',
+                 color: '#ef4444',
+                 padding: '8px',
+                 borderRadius: '8px',
+                 border: '1px solid #fecaca',
+                 cursor: 'pointer',
+                 display: 'flex',
+                 alignItems: 'center',
+                 justifyContent: 'center',
+                 transition: 'all 0.2s',
+               }}
+               onMouseEnter={(e) => e.currentTarget.style.background = '#fecaca'}
+               onMouseLeave={(e) => e.currentTarget.style.background = '#fee2e2'}
+             >
+               <LogOut size={16} />
+             </button>
+           )}
+         </div>
       </div>
     </header>
   );
