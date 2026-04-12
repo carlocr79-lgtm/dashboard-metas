@@ -587,14 +587,16 @@ function MensualView({ data, subView, setSubView }) {
     <div>
       <div className="glass-card" style={{ padding: '20px 24px', animation: 'none' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
-          <h5 style={{ fontWeight: 800, margin: 0, fontSize: '1rem', color: '#002d72' }}>Análisis de Avance Mensual</h5>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <SubNavControls subView={subView} setSubView={setSubView} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <h5 style={{ fontWeight: 800, margin: 0, fontSize: '1rem', color: '#002d72' }}>Análisis de Avance Mensual</h5>
             {bonos && (
-              <button onClick={() => setShowBonos(true)} className="btn-ver-bonos-compact">
-                <Eye size={14} /> Ver Bonos
+              <button onClick={() => setShowBonos(true)} className="btn-ver-bonos-compact" style={{ padding: '4px 10px', fontSize: '0.68rem', borderRadius: '8px', height: '26px' }}>
+                <Eye size={12} /> Ver Bonos
               </button>
             )}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <SubNavControls subView={subView} setSubView={setSubView} />
           </div>
         </div>
 
@@ -624,14 +626,16 @@ function TrimestralView({ data, subView, setSubView }) {
     <div>
       <div className="glass-card" style={{ padding: '20px 24px', animation: 'none' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
-          <h5 style={{ fontWeight: 800, margin: 0, fontSize: '1rem', color: '#002d72' }}>Análisis Trimestral</h5>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-            <SubNavControls subView={subView} setSubView={setSubView} />
+          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+            <h5 style={{ fontWeight: 800, margin: 0, fontSize: '1rem', color: '#002d72' }}>Análisis Trimestral</h5>
             {bonos && (
-              <button onClick={() => setShowBonos(true)} className="btn-ver-bonos-compact">
-                <Eye size={14} /> Ver Bonos
+              <button onClick={() => setShowBonos(true)} className="btn-ver-bonos-compact" style={{ padding: '4px 10px', fontSize: '0.68rem', borderRadius: '8px', height: '26px' }}>
+                <Eye size={12} /> Ver Bonos
               </button>
             )}
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <SubNavControls subView={subView} setSubView={setSubView} />
           </div>
         </div>
 
