@@ -151,7 +151,7 @@ export default function BoletasTab({ data }) {
                   <button 
                     onClick={() => verBoleta(b.fileId)} 
                     disabled={isLoadingView}
-                    style={{ padding: '6px 10px', background: 'var(--grad-violet)', color: 'white', border: 'none', borderRadius: '8px', fontSize: '0.65rem', fontWeight: 700, cursor: 'pointer', opacity: isLoadingView ? 0.7 : 1, display: 'flex', alignItems: 'center' }}
+                    style={{ padding: '6px 10px', background: 'var(--grad-light-blue)', color: '#1e40af', border: '1px solid #bfdbfe', borderRadius: '8px', fontSize: '0.65rem', fontWeight: 800, cursor: 'pointer', opacity: isLoadingView ? 0.7 : 1, display: 'flex', alignItems: 'center' }}
                     title="Ver"
                   >
                     {isLoadingView ? <Loader2 size={14} className="spin-anim" /> : <Eye size={14} />}
@@ -159,7 +159,7 @@ export default function BoletasTab({ data }) {
                   <button 
                     onClick={() => descargarBoleta(b.fileId, b.descripcion)} 
                     disabled={isLoadingDownload}
-                    style={{ padding: '6px 10px', background: 'var(--grad-sapphire)', color: 'white', border: 'none', borderRadius: '8px', fontSize: '0.65rem', fontWeight: 700, cursor: 'pointer', opacity: isLoadingDownload ? 0.7 : 1, display: 'flex', alignItems: 'center' }}
+                    style={{ padding: '6px 10px', background: 'var(--grad-primary)', color: 'white', border: 'none', borderRadius: '8px', fontSize: '0.65rem', fontWeight: 800, cursor: 'pointer', opacity: isLoadingDownload ? 0.7 : 1, display: 'flex', alignItems: 'center' }}
                     title="Descargar"
                   >
                     {isLoadingDownload ? <Loader2 size={14} className="spin-anim" /> : <Download size={14} />}

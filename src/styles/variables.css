@@ -17,13 +17,12 @@
   --radius-md: 12px;
   --radius-sm: 8px;
   
-  /* Premium Colors & Gradients Corporativos */
-  --grad-cobalt: linear-gradient(135deg, #002d72, #1e40af);
-  --grad-sapphire: linear-gradient(135deg, #1e3a8a, #3b82f6);
-  --grad-red-accent: linear-gradient(135deg, #da291c, #ef4444);
-  --grad-emerald: linear-gradient(135deg, #0f766e, #14b8a6);
-  --grad-violet: linear-gradient(135deg, #7c3aed, #6d28d9);
-  --grad-gold: linear-gradient(135deg, #fbbf24, #d97706);
+  /* Premium Colors & Gradients Corporativos Estrictos */
+  --grad-primary: linear-gradient(135deg, #002d72, #1e40af);
+  --grad-danger: linear-gradient(135deg, #da291c, #991b1b);
+  --grad-light-blue: linear-gradient(135deg, #eff6ff, #dbeafe);
+  --grad-light-red: linear-gradient(135deg, #fef2f2, #fee2e2);
+  --grad-neutral: linear-gradient(135deg, #f8fafc, #f1f5f9);
   
   /* Glassmorphism System - LIGHT MODE */
   --glass-bg: rgba(255, 255, 255, 0.95);

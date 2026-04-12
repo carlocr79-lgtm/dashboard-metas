@@ -20,9 +20,9 @@ function formatBadge(val) {
 
 function getProgressColor(pctStr) {
   const pct = parseFloat(pctStr) || 0;
-  if (pct >= 100) return '#10b981';
-  if (pct >= 80) return '#f59e0b';
-  return '#ef4444';
+  if (pct >= 100) return '#002d72';
+  if (pct >= 80) return '#3b82f6';
+  return '#da291c';
 }
 
 // ═══ SUB-VISTA: CONDICIONES ═══
@@ -56,15 +56,15 @@ function CondicionesView({ camp }) {
                   <strong>Premios por Ranking:</strong>
                   <div style={{ marginTop: '6px', display: 'flex', flexDirection: 'column', gap: '4px' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ background: '#fbbf24', color: '#78350f', padding: '2px 8px', borderRadius: '6px', fontSize: '0.7rem', fontWeight: 700 }}>🏆 1° Oro</span>
+                      <span style={{ background: '#002d72', color: 'white', padding: '2px 8px', borderRadius: '6px', fontSize: '0.7rem', fontWeight: 700 }}>🏆 1° Oro</span>
                       <span style={{ fontWeight: 800, color: 'var(--text-main)' }}>S/. {Number(camp.premios?.[0] || 0).toFixed(2)}</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ background: '#94a3b8', color: 'white', padding: '2px 8px', borderRadius: '6px', fontSize: '0.7rem', fontWeight: 700 }}>🥈 2° Plata</span>
+                      <span style={{ background: '#1e40af', color: 'white', padding: '2px 8px', borderRadius: '6px', fontSize: '0.7rem', fontWeight: 700 }}>🥈 2° Plata</span>
                       <span style={{ fontWeight: 800, color: 'var(--text-main)' }}>S/. {Number(camp.premios?.[1] || 0).toFixed(2)}</span>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
-                      <span style={{ background: '#cd7f32', color: 'white', padding: '2px 8px', borderRadius: '6px', fontSize: '0.7rem', fontWeight: 700 }}>🥉 3° Bronce</span>
+                      <span style={{ background: '#eff6ff', color: '#002d72', padding: '2px 8px', borderRadius: '6px', fontSize: '0.7rem', fontWeight: 700 }}>🥉 3° Bronce</span>
                       <span style={{ fontWeight: 800, color: 'var(--text-main)' }}>S/. {Number(camp.premios?.[2] || 0).toFixed(2)}</span>
                     </div>
                   </div>
@@ -89,9 +89,9 @@ function AvanceView({ camp, data }) {
   if (camp.miPuesto > 0) {
     const medals = { 1: '🥇', 2: '🥈', 3: '🥉' };
     const topColors = {
-      1: { color: '#d97706', bg: 'rgba(217, 119, 6, 0.1)', border: 'rgba(217, 119, 6, 0.2)' },
-      2: { color: '#64748b', bg: 'rgba(100, 116, 139, 0.1)', border: 'rgba(100, 116, 139, 0.2)' },
-      3: { color: '#b45309', bg: 'rgba(180, 83, 9, 0.1)', border: 'rgba(180, 83, 9, 0.2)' },
+      1: { color: 'white', bg: '#002d72', border: '#002d72' },
+      2: { color: 'white', bg: '#1e40af', border: '#1e40af' },
+      3: { color: '#002d72', bg: '#eff6ff', border: '#bfdbfe' },
     };
     const tc = topColors[camp.miPuesto] || { color: '#1e3a8a', bg: 'rgba(30, 58, 138, 0.1)', border: 'rgba(30, 58, 138, 0.2)' };
     topRankHtml = (
@@ -128,7 +128,7 @@ function AvanceView({ camp, data }) {
               <tr>
                 <td style={{ fontWeight: 700 }}>Mora</td>
                 <td className="metric-val" style={{ textAlign: 'center' }}>{data.cm0 || (camp.moraMax + '%')}</td>
-                <td style={{ textAlign: 'center', fontWeight: 800, color: parseFloat(data.cm1) <= camp.moraMax ? '#10b981' : '#ef4444' }}>{data.cm1}</td>
+                <td style={{ textAlign: 'center', fontWeight: 800, color: parseFloat(data.cm1) <= camp.moraMax ? '#002d72' : '#da291c' }}>{data.cm1}</td>
                 <td style={{ textAlign: 'center' }}>{formatBadge(data.cm2 || '---')}</td>
               </tr>
               <tr>
@@ -140,7 +140,7 @@ function AvanceView({ camp, data }) {
               <tr>
                 <td style={{ fontWeight: 700 }}>Saldo</td>
                 <td className="metric-val" style={{ textAlign: 'center' }}>{data.cs1 || '---'}</td>
-                <td style={{ textAlign: 'center', fontWeight: 800, color: '#10b981' }}>{data.cs2}</td>
+                <td style={{ textAlign: 'center', fontWeight: 800, color: '#002d72' }}>{data.cs2}</td>
                 <td style={{ textAlign: 'center' }}>{formatBadge(data.cs3)}</td>
               </tr>
             </tbody>
@@ -227,14 +227,14 @@ function RankingView({ camp, data }) {
 
             const pClass = pos === 1 ? 'gold' : pos === 2 ? 'silver' : pos === 3 ? 'bronze' : 'other';
             const icon = pos === 1 ? '👑' : pos === 2 ? '🥈' : pos === 3 ? '🥉' : `${pos}°`;
-            const moraColor = parseFloat(ej.moraTexto) <= camp.moraMax ? '#16a34a' : '#ef4444';
+            const moraColor = parseFloat(ej.moraTexto) <= camp.moraMax ? '#002d72' : '#da291c';
 
             return (
               <div key={idx} className={`ranking-item${isMe ? ' is-me' : ''}`}>
                 <div className={`puesto-box ${pClass}`}>{icon}</div>
                 <div style={{ flex: 1 }}>
                   <div style={{ fontWeight: 800, color: 'var(--text-main)', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    {ej.nombre} {isMe && <Sparkles size={14} color="#f59e0b" />}
+                    {ej.nombre} {isMe && <Sparkles size={14} color="#002d72" />}
                   </div>
                   <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 600, textTransform: 'uppercase' }}>
                     {ej.oficina}
@@ -296,13 +296,13 @@ export default function CampaignTab({ data }) {
       <div className="glass-card" style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', padding: '16px 24px', borderLeft: '4px solid var(--rojo-corporativo)', marginBottom: '0' }}>
         <div style={{ display: 'flex', gap: '16px', alignItems: 'center' }}>
           <div style={{ width: '48px', height: '48px', display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0 }}>
-            <Trophy size={32} color="#d97706" />
+            <Trophy size={32} color="#002d72" />
           </div>
           <div>
-            <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#b45309', opacity: 0.9, letterSpacing: '2px' }}>
+            <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#1e40af', opacity: 0.9, letterSpacing: '2px' }}>
               {camp.activa ? 'CAMPAÑA ACTIVA' : 'CAMPAÑA FINALIZADA'}
             </div>
-            <h2 style={{ margin: 0, fontSize: '1.6rem', fontWeight: 900, color: '#d97706', lineHeight: 1 }}>
+            <h2 style={{ margin: 0, fontSize: '1.6rem', fontWeight: 900, color: '#002d72', lineHeight: 1 }}>
               {camp.name}
             </h2>
           </div>

@@ -21,7 +21,7 @@ function formatBadge(val) {
 function BonoRow({ label, avance, estado, bono }) {
   const avanceDisplay = avance || '-';
   const bonoDisplay = bono || '';
-  const bonoColor = bonoDisplay && bonoDisplay !== 'S/.0.00' ? '#10b981' : '#94a3b8';
+  const bonoColor = bonoDisplay && bonoDisplay !== 'S/.0.00' ? '#002d72' : '#94a3b8';
   const estadoHtml = estado ? formatBadge(estado) : (avance ? formatBadge(avance) : <span style={{ color: 'var(--text-muted)' }}>-</span>);
 
   return (
@@ -128,7 +128,7 @@ function TrimestralView({ bonos }) {
             <tbody>
               <BonoRow label="Saldo Trimestral" avance={bonos.saldoTrimestralAvance} estado={bonos.estadoSaldoTrim} bono="" />
               <BonoRow label="Colocación Trimestral" avance={bonos.colocacionTrimestralAvance} estado={bonos.estadoColocTrim} bono="" />
-              <TotalRow label="TOTAL TRIMESTRAL" monto={bonos.bonoTrimestralTotal} bgColor="#f0fdf4" textColor="#166534" />
+              <TotalRow label="TOTAL TRIMESTRAL" monto={bonos.bonoTrimestralTotal} bgColor="#eff6ff" textColor="#1e40af" />
             </tbody>
           </table>
         </div>
@@ -188,7 +188,7 @@ export default function BonosTab({ data }) {
       <div className="glass-card">
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', flexWrap: 'wrap', gap: '8px' }}>
           <h5 style={{ margin: 0, fontWeight: 800, fontSize: '0.95rem' }}>RESUMEN DE BONOS</h5>
-          <span style={{ background: '#dcfce7', color: '#166534', padding: '5px 12px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '6px', border: '1px solid #bbf7d0' }}>
+          <span style={{ background: '#eff6ff', color: '#1e40af', padding: '5px 12px', borderRadius: '20px', fontSize: '0.72rem', fontWeight: 800, display: 'inline-flex', alignItems: 'center', gap: '6px', border: '1px solid #bfdbfe' }}>
             <CheckCircle size={12} /> Mora: {bonos.moraReal} — {bonos.estadoMora}
           </span>
         </div>
@@ -199,8 +199,8 @@ export default function BonosTab({ data }) {
             <div className="bonos-fecha">Corte: {bonos.fechaCorteMes} • Pago: {bonos.fechaPagoMes}</div>
           </div>
           <div className="bonos-card-item bonos-card-trimestral">
-            <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#166534', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px' }}>Bono Trimestral</div>
-            <div className="bonos-monto" style={{ background: 'var(--grad-emerald)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{bonos.bonoTrimestralTotal}</div>
+            <div style={{ fontSize: '0.7rem', fontWeight: 800, color: '#1e40af', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '6px' }}>Bono Trimestral</div>
+            <div className="bonos-monto" style={{ background: 'var(--grad-primary)', WebkitBackgroundClip: 'text', WebkitTextFillColor: 'transparent' }}>{bonos.bonoTrimestralTotal}</div>
             <div className="bonos-fecha">Corte: {bonos.fechaCorteTrim} • Pago: {bonos.fechaPagoTrim}</div>
           </div>
         </div>

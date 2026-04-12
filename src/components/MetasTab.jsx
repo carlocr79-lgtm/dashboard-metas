@@ -268,26 +268,26 @@ function EjecutivoCard({ persona, pos, isAdmin }) {
   const moraDotColor = getMoraColor(persona.moraSit || persona.mora);
   const colPctRaw = parseFloat((persona.colMesPct || '0').replace('%', '').replace(',', '.')) || 0;
   const colPct = Math.min(colPctRaw, 100);
-  const colColor = colPctRaw >= 90 ? '#10b981' : colPctRaw >= 60 ? '#f59e0b' : '#ef4444';
+  const colColor = colPctRaw >= 90 ? '#002d72' : colPctRaw >= 60 ? '#3b82f6' : '#da291c';
 
   return (
     <div className={`ej-card${isAdmin ? ' admin-card' : ''}`}>
       <div className="ej-card-header" onClick={() => setOpen(!open)}>
         <div style={{
           width: '26px', height: '26px', borderRadius: isAdmin ? '10px' : '50%',
-          background: isAdmin ? 'linear-gradient(135deg, #7c3aed, #6d28d9)' : '#e2e8f0',
+          background: isAdmin ? 'var(--grad-primary)' : '#e2e8f0',
           display: 'flex', alignItems: 'center', justifyContent: 'center', flexShrink: 0,
           fontSize: '0.7rem', fontWeight: 800, color: isAdmin ? 'white' : '#475569'
         }}>
           {isAdmin ? '🏛️' : `${pos}°`}
         </div>
         <div style={{ flex: 1, minWidth: 0 }}>
-          <div style={{ fontWeight: 700, color: isAdmin ? '#5b21b6' : '#002d72', fontSize: '0.82rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex', alignItems: 'center', gap: '4px' }}>
+          <div style={{ fontWeight: 700, color: '#002d72', fontSize: '0.82rem', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', display: 'flex', alignItems: 'center', gap: '4px' }}>
             <span style={{ width: '7px', height: '7px', borderRadius: '50%', background: moraDotColor, flexShrink: 0, boxShadow: `0 0 4px ${moraDotColor}40` }} />
             {isAdmin ? 'META DE OFICINA' : shortName(persona.nombre)}
-            {isAdmin && <span style={{ background: 'linear-gradient(135deg, #7c3aed, #6d28d9)', color: 'white', padding: '2px 8px', borderRadius: '6px', fontSize: '0.5rem', fontWeight: 800, marginLeft: '6px', letterSpacing: '0.5px' }}>ADMIN</span>}
+            {isAdmin && <span style={{ background: 'var(--grad-primary)', color: 'white', padding: '2px 8px', borderRadius: '6px', fontSize: '0.5rem', fontWeight: 800, marginLeft: '6px', letterSpacing: '0.5px' }}>ADMIN</span>}
           </div>
-          <div style={{ fontSize: '0.6rem', color: isAdmin ? '#7c3aed' : '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>
+          <div style={{ fontSize: '0.6rem', color: isAdmin ? '#1e40af' : '#64748b', textTransform: 'uppercase', fontWeight: 600 }}>
             {isAdmin ? persona.oficina : (persona.categoria || '')}
           </div>
         </div>
@@ -297,7 +297,7 @@ function EjecutivoCard({ persona, pos, isAdmin }) {
           </div>
           <span style={{ fontSize: '0.6rem', fontWeight: 800, color: colColor, minWidth: '28px', textAlign: 'right' }}>{persona.colMesPct || '0%'}</span>
         </div>
-        {open ? <ChevronUp size={14} color={isAdmin ? '#7c3aed' : '#94a3b8'} /> : <ChevronDown size={14} color={isAdmin ? '#7c3aed' : '#94a3b8'} />}
+        {open ? <ChevronUp size={14} color={isAdmin ? '#1e40af' : '#94a3b8'} /> : <ChevronDown size={14} color={isAdmin ? '#1e40af' : '#94a3b8'} />}
       </div>
       {open && (
         <div className="ej-detail-panel">
