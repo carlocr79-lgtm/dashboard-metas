@@ -585,7 +585,7 @@ function MensualView({ data, subView, setSubView }) {
 
   return (
     <div>
-      <div className="glass-card" style={{ padding: '20px 24px' }}>
+      <div className="glass-card" style={{ padding: '20px 24px', animation: 'none' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
           <h5 style={{ fontWeight: 800, margin: 0, fontSize: '1rem', color: '#002d72' }}>Análisis de Avance Mensual</h5>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -599,7 +599,7 @@ function MensualView({ data, subView, setSubView }) {
         </div>
 
         {/* Renderizado Premium Grid de Tarjetas */}
-        <div className="grid-cards-container" style={{ animation: 'fadeIn 0.4s ease-out' }}>
+        <div className="grid-cards-container">
           {mensualMap.map((item, i) => (
             <EnrichedCard key={i} item={item} />
           ))}
@@ -622,7 +622,7 @@ function TrimestralView({ data, subView, setSubView }) {
 
   return (
     <div>
-      <div className="glass-card" style={{ padding: '20px 24px' }}>
+      <div className="glass-card" style={{ padding: '20px 24px', animation: 'none' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
           <h5 style={{ fontWeight: 800, margin: 0, fontSize: '1rem', color: '#002d72' }}>Análisis Trimestral</h5>
           <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
@@ -636,7 +636,7 @@ function TrimestralView({ data, subView, setSubView }) {
         </div>
 
         {/* Renderizado Premium Grid de Tarjetas */}
-        <div className="grid-cards-container" style={{ animation: 'fadeIn 0.4s ease-out' }}>
+        <div className="grid-cards-container">
           {trimData.map((item, i) => (
             <EnrichedCard key={i} item={item} />
           ))}
@@ -771,9 +771,9 @@ function GeneralView({ data, subView, setSubView }) {
   }
 
   return (
-    <div>
+    <div className="glass-card" style={{ padding: 0, overflow: 'hidden', animation: 'none' }}>
       {/* Header con selector */}
-      <div className="glass-card" style={{ padding: '12px 16px', marginBottom: '10px' }}>
+      <div style={{ padding: '12px 16px', borderBottom: '1px solid #e2e8f0', background: 'rgba(255, 255, 255, 0.4)' }}>
         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flex: 1, minWidth: 0 }}>
             <Building2 size={16} color="#2563eb" />
@@ -795,12 +795,12 @@ function GeneralView({ data, subView, setSubView }) {
       </div>
 
       {loading ? (
-        <div className="glass-card" style={{ textAlign: 'center', padding: '40px 20px' }}>
+        <div style={{ textAlign: 'center', padding: '40px 20px' }}>
           <Loader2 size={32} className="spin-anim" color="var(--primary-bank)" />
           <div style={{ fontWeight: 700, color: 'var(--primary-bank)', fontSize: '0.85rem', marginTop: '12px' }}>Cargando oficina {selectedOficina}...</div>
         </div>
       ) : (
-        <div className="glass-card" style={{ padding: 0, overflow: 'hidden', animation: 'fadeIn 0.4s ease-out' }}>
+        <div>
           {esGerencia ? (
             // GERENCIA: Lista unificada
             [...admins, ...ejecutivos]
