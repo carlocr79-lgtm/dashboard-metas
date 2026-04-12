@@ -137,7 +137,8 @@ function IndicatorBadge({ icon: Icon, label, situation, sitColor, meta, real, re
 function BonosModal({ bonos, data, onClose, mode }) {
   if (!bonos || !data) return null;
 
-  const comisiona = bonos.estadoMora && bonos.estadoMora.toLowerCase().includes('comisiona') && !bonos.estadoMora.toLowerCase().includes('no comisiona');
+  const estadoMoraStr = (bonos.estadoMora || '').toString().toLowerCase();
+  const comisiona = estadoMoraStr.includes('✅') || estadoMoraStr.includes('comisiona') && !estadoMoraStr.includes('no comisiona');
   const smColor = getStatusColor(data.sm3);
   const esMensual = mode === 'mensual';
   const titulo = esMensual ? 'Bonos Mensuales' : 'Bonos Trimestrales';
