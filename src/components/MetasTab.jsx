@@ -268,6 +268,18 @@ function BonosModal({ bonos, data, onClose, mode }) {
                   return 'S/ ' + formatted;
                 })() : bonos.bonoTrimestralTotal}
               </div>
+              
+              {esMensual && bonos.fechaPagoMensual && (
+                <div style={{ fontSize: '0.65rem', color: '#1e40af', fontWeight: 800, marginTop: '4px', background: '#ffffff50', display: 'inline-block', padding: '2px 8px', borderRadius: '10px' }}>
+                  🗓️ Fecha de pago: {bonos.fechaPagoMensual}
+                </div>
+              )}
+              
+              {!esMensual && bonos.fechaPagoTrimestral && (
+                <div style={{ fontSize: '0.65rem', color: '#1e40af', fontWeight: 800, marginTop: '4px', background: '#ffffff50', display: 'inline-block', padding: '2px 8px', borderRadius: '10px' }}>
+                  🗓️ Fecha de pago: {bonos.fechaPagoTrimestral}
+                </div>
+              )}
             </div>
 
             {esMensual ? (
