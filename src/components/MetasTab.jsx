@@ -180,21 +180,21 @@ const BonoItem = ({ label, avance, estado, bono, icon: Icon }) => {
   return (
     <div style={{
       display: 'flex', alignItems: 'center', justifyContent: 'space-between',
-      padding: '12px 14px', background: '#ffffff', borderRadius: '12px',
-      border: '1px solid #e2e8f0', marginBottom: '8px',
+      padding: '8px 12px', background: '#ffffff', borderRadius: '12px',
+      border: '1px solid #e2e8f0', marginBottom: '6px',
       boxShadow: '0 2px 8px rgba(0,0,0,0.02)', transition: 'transform 0.2s, box-shadow 0.2s',
       cursor: 'default'
     }}
     onMouseEnter={(e) => { e.currentTarget.style.transform = 'translateY(-2px)'; e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,45,114,0.08)'; }}
     onMouseLeave={(e) => { e.currentTarget.style.transform = 'none'; e.currentTarget.style.boxShadow = '0 2px 8px rgba(0,0,0,0.02)'; }}
     >
-      <div style={{ display: 'flex', alignItems: 'center', gap: '12px', flex: '1.2', minWidth: '120px' }}>
-        <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--grad-neutral)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #f1f5f9' }}>
-          <Icon size={18} color="#002d72" />
+      <div style={{ display: 'flex', alignItems: 'center', gap: '10px', flex: '1.2', minWidth: '120px' }}>
+        <div style={{ width: '32px', height: '32px', borderRadius: '8px', background: 'var(--grad-neutral)', display: 'flex', alignItems: 'center', justifyContent: 'center', border: '1px solid #f1f5f9' }}>
+          <Icon size={16} color="#002d72" />
         </div>
         <div>
-          <div style={{ fontWeight: 800, fontSize: '0.78rem', color: '#1e293b' }}>{label}</div>
-          <div style={{ fontSize: '0.65rem', color: '#64748b', fontWeight: 600 }}>Avance: <span style={{ color: '#0f172a', fontWeight: 800 }}>{avance || '-'}</span></div>
+          <div style={{ fontWeight: 800, fontSize: '0.72rem', color: '#1e293b' }}>{label}</div>
+          <div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 600 }}>Avance: <span style={{ color: '#0f172a', fontWeight: 800 }}>{avance || '-'}</span></div>
         </div>
       </div>
       
@@ -255,51 +255,50 @@ function BonosModal({ bonos, data, onClose, mode }) {
           {/* Tarjeta de Total Premium */}
               <div style={{
                 background: 'var(--grad-primary)',
-                borderRadius: '20px', padding: '24px', textAlign: 'center', marginBottom: '24px',
+                borderRadius: '16px', padding: '16px 20px', display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '16px',
                 color: 'white', position: 'relative', overflow: 'hidden',
-                boxShadow: '0 10px 25px -5px rgba(0, 45, 114, 0.3)'
+                boxShadow: '0 8px 20px -6px rgba(0, 45, 114, 0.25)'
               }}>
-                <Wallet size={160} color="rgba(255,255,255,0.06)" style={{ position: 'absolute', top: '-30px', right: '-30px', transform: 'rotate(-15deg)' }} />
+                <Wallet size={80} color="rgba(255,255,255,0.06)" style={{ position: 'absolute', top: '-10px', right: '10px', transform: 'rotate(-5deg)' }} />
                 
-                <div style={{ position: 'relative', zIndex: 1 }}>
-                  <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#bfdbfe', textTransform: 'uppercase', letterSpacing: '1.5px', marginBottom: '8px' }}>
+                <div style={{ position: 'relative', zIndex: 1, flex: 1 }}>
+                  <div style={{ fontSize: '0.75rem', fontWeight: 800, color: '#bfdbfe', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '2px' }}>
                     {esMensual ? 'Total Bono Mensual' : 'Total Bono Trimestral'}
                   </div>
-                  <div style={{ fontSize: '2.5rem', fontWeight: 900, textShadow: '0 2px 4px rgba(0,0,0,0.2)', letterSpacing: '-1px' }}>
-                    {esMensual ? (() => {
-                      const parseMonto = (s) => {
-                        if (!s || s === '-') return 0;
-                        let str = s.toString().replace(/[^\d.,-]/g, '');
-                        if (str.includes(',') && str.includes('.')) {
-                          if (str.indexOf(',') < str.lastIndexOf('.')) str = str.replace(/,/g, '');
-                          else str = str.replace(/\./g, '').replace(',', '.');
-                        } else if (str.includes(',')) {
-                          if (str.length - str.lastIndexOf(',') <= 3) str = str.replace(',', '.');
-                          else str = str.replace(/,/g, '');
-                        }
-                        return parseFloat(str) || 0;
-                      };
-                      const prod = parseMonto(bonos.totalProductividadMensual);
-                      const indic = parseMonto(bonos.totalIndicadoresMensual);
-                      const total = prod + indic;
-                      if (bonos.bonoMensualTotal && bonos.bonoMensualTotal !== '-') return bonos.bonoMensualTotal;
-                      return 'S/ ' + total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
-                    })() : bonos.bonoTrimestralTotal}
-                  </div>
-
                   {(esMensual ? bonos.fechaPagoMensual : bonos.fechaPagoTrimestral) && (
-                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '6px', fontSize: '0.75rem', fontWeight: 700, marginTop: '12px', background: 'rgba(255,255,255,0.15)', backdropFilter: 'blur(4px)', border: '1px solid rgba(255,255,255,0.2)', padding: '6px 14px', borderRadius: '20px' }}>
-                      <Calendar size={14} /> Fecha de pago: {esMensual ? bonos.fechaPagoMensual : bonos.fechaPagoTrimestral}
+                    <div style={{ display: 'inline-flex', alignItems: 'center', gap: '4px', fontSize: '0.65rem', fontWeight: 600, color: '#93c5fd' }}>
+                      <Calendar size={12} /> Pago: {esMensual ? bonos.fechaPagoMensual : bonos.fechaPagoTrimestral}
                     </div>
                   )}
+                </div>
+                <div style={{ position: 'relative', zIndex: 1, fontSize: '1.8rem', fontWeight: 900, textShadow: '0 2px 4px rgba(0,0,0,0.15)', letterSpacing: '-0.5px' }}>
+                  {esMensual ? (() => {
+                    const parseMonto = (s) => {
+                      if (!s || s === '-') return 0;
+                      let str = s.toString().replace(/[^\d.,-]/g, '');
+                      if (str.includes(',') && str.includes('.')) {
+                        if (str.indexOf(',') < str.lastIndexOf('.')) str = str.replace(/,/g, '');
+                        else str = str.replace(/\./g, '').replace(',', '.');
+                      } else if (str.includes(',')) {
+                        if (str.length - str.lastIndexOf(',') <= 3) str = str.replace(',', '.');
+                        else str = str.replace(/,/g, '');
+                      }
+                      return parseFloat(str) || 0;
+                    };
+                    const prod = parseMonto(bonos.totalProductividadMensual);
+                    const indic = parseMonto(bonos.totalIndicadoresMensual);
+                    const total = prod + indic;
+                    if (bonos.bonoMensualTotal && bonos.bonoMensualTotal !== '-') return bonos.bonoMensualTotal;
+                    return 'S/ ' + total.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+                  })() : bonos.bonoTrimestralTotal}
                 </div>
               </div>
 
               {esMensual ? (
                 <>
                   {/* PRODUCTIVIDAD MENSUAL */}
-                  <div style={{ marginBottom: '24px' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', padding: '0 4px' }}>
+                  <div style={{ marginBottom: '16px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', padding: '0 4px' }}>
                       <h6 style={{ fontSize: '0.85rem', fontWeight: 900, color: 'var(--primary-bank)', margin: 0, display: 'flex', alignItems: 'center', gap: '8px', textTransform: 'uppercase' }}>
                         <Target size={16} color="#2563eb" /> Productividad
                       </h6>
@@ -323,7 +322,7 @@ function BonosModal({ bonos, data, onClose, mode }) {
 
                   {/* INDICADORES MENSUAL */}
                   <div>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', padding: '0 4px' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', padding: '0 4px' }}>
                       <h6 style={{ fontSize: '0.85rem', fontWeight: 900, color: 'var(--primary-bank)', margin: 0, display: 'flex', alignItems: 'center', gap: '8px', textTransform: 'uppercase' }}>
                         <ClipboardList size={16} color="#2563eb" /> Indicadores
                       </h6>
@@ -350,7 +349,7 @@ function BonosModal({ bonos, data, onClose, mode }) {
               ) : (
                 /* PRODUCTIVIDAD TRIMESTRAL */
                 <div>
-                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '12px', padding: '0 4px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '8px', padding: '0 4px' }}>
                     <h6 style={{ fontSize: '0.85rem', fontWeight: 900, color: 'var(--primary-bank)', margin: 0, display: 'flex', alignItems: 'center', gap: '8px', textTransform: 'uppercase' }}>
                       <CalendarCheck size={16} color="#2563eb" /> Productividad Trimestral
                     </h6>
