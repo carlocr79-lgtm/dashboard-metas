@@ -1,5 +1,5 @@
 import { useState, useEffect, useRef } from 'react';
-import { Calendar, TrendingUp, Users, ShieldAlert, Coins, ChevronDown, ChevronUp, Building2, Loader2, DollarSign, X, CheckCircle, XCircle, BarChart3, ClipboardList, CalendarCheck } from 'lucide-react';
+import { Calendar, TrendingUp, Users, ShieldAlert, Coins, ChevronDown, ChevronUp, Building2, Loader2, DollarSign, X, CheckCircle, XCircle, BarChart3, ClipboardList, CalendarCheck, Eye } from 'lucide-react';
 import { callGAS } from '../services/api';
 
 // ═══ HELPERS ═══
@@ -441,11 +441,20 @@ function EnrichedCard({ item }) {
 
   const metaNum = parseNum(item.m);
   const realNum = parseNum(item.r);
-  const diff = realNum - metaNum;
-  const pctReal = metaNum === 0 ? (realNum > 0 ? 100 : 0) : Math.min((realNum / metaNum) * 100, 100);
+  
+  let fMeta = metaNum;
+  let fReal = realNum;
+
+  if (item.type === 'percent') {
+    if (fMeta > 100) fMeta = fMeta / 100;
+    if (fReal > 100) fReal = fReal / 100;
+  }
+  
+  const diff = fReal - fMeta;
+  const pctReal = fMeta === 0 ? (fReal > 0 ? 100 : 0) : Math.min((fReal / fMeta) * 100, 100);
 
   let diffText = '';
-  let diffColor = '#64748b'; // Gris
+  let diffColor = '#64748b'; 
   let formattedDiff = Math.abs(diff).toLocaleString('es-PE', { minimumFractionDigits: item.type === 'number' ? 0 : 2, maximumFractionDigits: item.type === 'number' ? 0 : 2 });
 
   if (item.type === 'money') formattedDiff = 'S/. ' + formattedDiff;
@@ -453,13 +462,12 @@ function EnrichedCard({ item }) {
   
   if (diff >= 0) {
     diffText = `🔥 Superado (+${formattedDiff})`;
-    diffColor = '#059669'; // Verde Esmeralda
+    diffColor = '#059669'; 
   } else {
     diffText = `⚠️ Faltan ${formattedDiff}`;
-    diffColor = '#da291c'; // Rojo
+    diffColor = '#da291c'; 
   }
 
-  // Si es %, el Faltan suena raro, lo cambiamos:
   if (item.type === 'percent' && diff < 0) diffText = `⚠️ Debajo por ${formattedDiff}`;
 
   if (!item.m || item.m === '-' || !item.r || item.r === '-') {
@@ -467,16 +475,21 @@ function EnrichedCard({ item }) {
     diffColor = '#94a3b8';
   }
 
-  // Textos para Badges
   const sNum = parseNum(item.s);
   let statusText = 'En Riesgo';
   let badgeClass = 'badge-soft-warning';
   if (sNum >= 100) { statusText = 'Excelente'; badgeClass = 'badge-soft-success'; }
   else if (sNum < 80) { statusText = 'Crítico'; badgeClass = 'badge-soft-danger'; }
 
+  let mDisplay = item.m;
+  let rDisplay = item.r;
+  if (item.type === 'percent') {
+     mDisplay = fMeta.toFixed(2) + '%';
+     rDisplay = fReal.toFixed(2) + '%';
+  }
+
   return (
     <div className="enriched-card">
-       {/* Parte Superior: Icono, Titulo y Status */}
        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '14px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
              <div style={{ width: '40px', height: '40px', borderRadius: '12px', background: `${color}15`, color: color, display: 'flex', alignItems: 'center', justifyContent: 'center', border: `1px solid ${color}30` }}>
@@ -484,17 +497,16 @@ function EnrichedCard({ item }) {
              </div>
              <div>
                 <div style={{ fontWeight: 800, fontSize: '0.88rem', color: '#1e293b' }}>{item.l}</div>
-                <div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Objetivo: {item.m}</div>
+                <div style={{ fontSize: '0.62rem', color: '#64748b', fontWeight: 600, textTransform: 'uppercase' }}>Objetivo: {mDisplay}</div>
              </div>
           </div>
           <span className={`badge-premium ${badgeClass}`} style={{ fontSize: '0.58rem' }}>{statusText}</span>
        </div>
 
-       {/* Parte Central: Textos a la Iqz, Speedometer Derecha */}
        <div style={{ display: 'flex', gap: '8px', alignItems: 'flex-end', justifyContent: 'space-between', flex: 1, marginBottom: '12px' }}>
           <div style={{ flex: 1 }}>
              <div style={{ fontSize: '0.65rem', color: '#94a3b8', fontWeight: 800, textTransform: 'uppercase', marginBottom: '0px', letterSpacing: '0.5px' }}>ALCANZADO</div>
-             <div style={{ fontSize: '1.2rem', fontWeight: 900, color: color, lineHeight: '1.2', marginBottom: '6px' }}>{item.r}</div>
+             <div style={{ fontSize: '1.2rem', fontWeight: 900, color: color, lineHeight: '1.2', marginBottom: '6px' }}>{rDisplay}</div>
              <div style={{ border: `1px solid ${diffColor}20`, background: diffColor+'10', display: 'inline-flex', padding: '3px 8px', borderRadius: '8px' }}>
                 <span style={{ fontSize: '0.62rem', fontWeight: 800, color: diffColor }}>{diffText}</span>
              </div>
@@ -533,7 +545,7 @@ function MensualView({ data }) {
           <h5 style={{ fontWeight: 800, margin: 0, fontSize: '1rem', color: '#002d72' }}>Análisis de Avance Mensual</h5>
           {bonos && (
             <button onClick={() => setShowBonos(true)} className="btn-ver-bonos-compact">
-              <DollarSign size={14} /> Ver Bonos
+              <Eye size={14} /> Ver Bonos
             </button>
           )}
         </div>
@@ -567,7 +579,7 @@ function TrimestralView({ data }) {
           <h5 style={{ fontWeight: 800, margin: 0, fontSize: '1rem', color: '#002d72' }}>Análisis Trimestral</h5>
           {bonos && (
             <button onClick={() => setShowBonos(true)} className="btn-ver-bonos-compact">
-              <DollarSign size={14} /> Ver Bonos Trimestrales
+              <Eye size={14} /> Ver Bonos Trimestrales
             </button>
           )}
         </div>
@@ -787,6 +799,20 @@ export default function MetasTab({ data }) {
           border-color: #cbd5e1;
           box-shadow: 0 16px 32px -4px rgba(0, 45, 114, 0.08);
           transform: translateY(-4px);
+        }
+        .btn-ver-bonos-compact {
+          padding: 6px 12px !important;
+          font-size: 0.72rem !important;
+          border-radius: 8px !important;
+        }
+        .sub-nav-btn {
+          padding: 6px 14px !important;
+          font-size: 0.75rem !important;
+          gap: 6px !important;
+          border-radius: 8px !important;
+        }
+        .sub-nav-wrapper {
+          gap: 6px !important;
         }
       `}</style>
       {/* Sub-navegación */}
