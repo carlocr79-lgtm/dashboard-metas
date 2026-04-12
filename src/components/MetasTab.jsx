@@ -552,8 +552,25 @@ function EnrichedCard({ item }) {
   );
 }
 
+// ═══ SUB-NAVEGADOR COMPACTO ═══
+function SubNavControls({ subView, setSubView }) {
+  return (
+    <div style={{ display: 'flex', gap: '4px', background: '#f8fafc', padding: '4px', borderRadius: '10px', border: '1px solid #e2e8f0' }}>
+      <button className={`sub-nav-btn${subView === 'mensual' ? ' active' : ''}`} onClick={() => setSubView('mensual')} style={{ margin: 0, padding: '4px 12px' }}>
+        Mensual
+      </button>
+      <button className={`sub-nav-btn${subView === 'trimestral' ? ' active' : ''}`} onClick={() => setSubView('trimestral')} style={{ margin: 0, padding: '4px 12px' }}>
+        Trimestral
+      </button>
+      <button className={`sub-nav-btn${subView === 'general' ? ' active' : ''}`} onClick={() => setSubView('general')} style={{ margin: 0, padding: '4px 12px' }}>
+        General
+      </button>
+    </div>
+  );
+}
+
 // ═══ SUB-VISTA: MENSUAL ═══
-function MensualView({ data }) {
+function MensualView({ data, subView, setSubView }) {
   const [showBonos, setShowBonos] = useState(false);
   const bonos = data.bonos;
 
@@ -569,13 +586,16 @@ function MensualView({ data }) {
   return (
     <div style={{ animation: 'slideUp 0.35s ease-out' }}>
       <div className="glass-card" style={{ padding: '20px 24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'nowrap', gap: '8px', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
           <h5 style={{ fontWeight: 800, margin: 0, fontSize: '1rem', color: '#002d72' }}>Análisis de Avance Mensual</h5>
-          {bonos && (
-            <button onClick={() => setShowBonos(true)} className="btn-ver-bonos-compact">
-              <Eye size={14} /> Ver Bonos
-            </button>
-          )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <SubNavControls subView={subView} setSubView={setSubView} />
+            {bonos && (
+              <button onClick={() => setShowBonos(true)} className="btn-ver-bonos-compact">
+                <Eye size={14} /> Ver Bonos
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Renderizado Premium Grid de Tarjetas */}
@@ -591,7 +611,7 @@ function MensualView({ data }) {
 }
 
 // ═══ SUB-VISTA: TRIMESTRAL ═══
-function TrimestralView({ data }) {
+function TrimestralView({ data, subView, setSubView }) {
   const [showBonos, setShowBonos] = useState(false);
   const bonos = data.bonos;
 
@@ -603,13 +623,16 @@ function TrimestralView({ data }) {
   return (
     <div style={{ animation: 'slideUp 0.35s ease-out' }}>
       <div className="glass-card" style={{ padding: '20px 24px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'nowrap', gap: '8px', marginBottom: '16px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px', marginBottom: '16px' }}>
           <h5 style={{ fontWeight: 800, margin: 0, fontSize: '1rem', color: '#002d72' }}>Análisis Trimestral</h5>
-          {bonos && (
-            <button onClick={() => setShowBonos(true)} className="btn-ver-bonos-compact">
-              <Eye size={14} /> Ver Bonos
-            </button>
-          )}
+          <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+            <SubNavControls subView={subView} setSubView={setSubView} />
+            {bonos && (
+              <button onClick={() => setShowBonos(true)} className="btn-ver-bonos-compact">
+                <Eye size={14} /> Ver Bonos
+              </button>
+            )}
+          </div>
         </div>
 
         {/* Renderizado Premium Grid de Tarjetas */}
@@ -707,7 +730,7 @@ function EjecutivoCard({ persona, pos, isAdmin, isOpen, onToggle }) {
 }
 
 // ═══ SUB-VISTA: GENERAL (AVANCE OFICINA) ═══
-function GeneralView({ data }) {
+function GeneralView({ data, subView, setSubView }) {
   const [loading, setLoading] = useState(false);
   const [avanceData, setAvanceData] = useState(null);
   const [selectedOficina, setSelectedOficina] = useState(data.oficina);
@@ -750,23 +773,24 @@ function GeneralView({ data }) {
   return (
     <div style={{ animation: 'slideUp 0.35s ease-out' }}>
       {/* Header con selector */}
-      <div className="glass-card" style={{ padding: '8px 12px', marginBottom: '10px' }}>
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '6px' }}>
+      <div className="glass-card" style={{ padding: '12px 16px', marginBottom: '10px' }}>
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '12px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '6px', flex: 1, minWidth: 0 }}>
-            <Building2 size={14} color="#2563eb" />
+            <Building2 size={16} color="#2563eb" />
             {esGerencia && listaOficinas.length > 1 ? (
               <select className="campaign-dropdown" value={selectedOficina} onChange={(e) => cambiarOficina(e.target.value)}>
                 {listaOficinas.map(o => <option key={o} value={o}>{o}</option>)}
               </select>
             ) : (
-              <span style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--primary-bank)' }}>
+              <span style={{ fontSize: '0.82rem', fontWeight: 800, color: 'var(--primary-bank)' }}>
                 AVANCE OFICINA: {selectedOficina}
               </span>
             )}
+            <span style={{ background: '#eff6ff', color: '#1d4ed8', padding: '3px 10px', borderRadius: '20px', fontSize: '0.65rem', fontWeight: 800, border: '1px solid #bfdbfe', marginLeft: '6px' }}>
+              <Users size={12} style={{ marginRight: '4px' }} />{totalPersonas} COL
+            </span>
           </div>
-          <span style={{ background: '#eff6ff', color: '#1d4ed8', padding: '3px 10px', borderRadius: '20px', fontSize: '0.6rem', fontWeight: 800, border: '1px solid #bfdbfe' }}>
-            <Users size={10} style={{ marginRight: '4px' }} />{totalPersonas} COLABORADORES
-          </span>
+          <SubNavControls subView={subView} setSubView={setSubView} />
         </div>
       </div>
 
@@ -843,24 +867,9 @@ export default function MetasTab({ data }) {
           gap: 6px !important;
         }
       `}</style>
-      {/* Sub-navegación */}
-      <div className="glass-card" style={{ padding: '8px 12px' }}>
-        <div className="sub-nav-wrapper">
-          <button className={`sub-nav-btn${subView === 'mensual' ? ' active' : ''}`} onClick={() => setSubView('mensual')}>
-            <Calendar size={14} /> Mensual
-          </button>
-          <button className={`sub-nav-btn${subView === 'trimestral' ? ' active' : ''}`} onClick={() => setSubView('trimestral')}>
-            <TrendingUp size={14} /> Trimestral
-          </button>
-          <button className={`sub-nav-btn${subView === 'general' ? ' active' : ''}`} onClick={() => setSubView('general')}>
-            <Users size={14} /> General
-          </button>
-        </div>
-      </div>
-
-      {subView === 'mensual' && <MensualView data={data} />}
-      {subView === 'trimestral' && <TrimestralView data={data} />}
-      {subView === 'general' && <GeneralView data={data} />}
+      {subView === 'mensual' && <MensualView data={data} subView={subView} setSubView={setSubView} />}
+      {subView === 'trimestral' && <TrimestralView data={data} subView={subView} setSubView={setSubView} />}
+      {subView === 'general' && <GeneralView data={data} subView={subView} setSubView={setSubView} />}
     </div>
   );
 }
