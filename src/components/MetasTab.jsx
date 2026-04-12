@@ -191,7 +191,7 @@ function BonosModal({ bonos, data, onClose, mode }) {
     <div className="modal-overlay" onClick={onClose}>
       <div className="modal-content" onClick={(e) => e.stopPropagation()}>
         {/* Header del Modal */}
-        <div className="modal-header">
+        <div className="modal-header" style={{ marginBottom: '10px', paddingBottom: '10px' }}>
           <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
             <div style={{ width: '36px', height: '36px', borderRadius: '10px', background: 'var(--grad-primary)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <DollarSign size={20} color="white" />
@@ -206,29 +206,17 @@ function BonosModal({ bonos, data, onClose, mode }) {
           </button>
         </div>
 
-        {/* Estado de Mora y SM */}
-        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px' }}>
+        {/* Estado de Mora */}
+        <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '10px' }}>
           <div style={{
             background: comisiona ? '#eff6ff' : '#fef2f2',
             border: `1px solid ${comisiona ? '#bfdbfe' : '#fecaca'}`,
-            borderRadius: '10px', padding: '10px 16px', flex: 1,
-            display: 'flex', alignItems: 'center', gap: '8px', minWidth: '200px'
+            borderRadius: '10px', padding: '8px 12px', flex: 1,
+            display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', minWidth: '200px'
           }}>
-            {comisiona ? <CheckCircle size={16} color="#002d72" /> : <XCircle size={16} color="#da291c" />}
-            <span style={{ fontWeight: 800, color: comisiona ? '#002d72' : '#da291c', fontSize: '0.8rem' }}>
+            {comisiona ? <CheckCircle size={15} color="#002d72" /> : <XCircle size={15} color="#da291c" />}
+            <span style={{ fontWeight: 800, color: comisiona ? '#002d72' : '#da291c', fontSize: '0.78rem' }}>
               Mora: {bonos.moraReal} — {bonos.estadoMora}
-            </span>
-          </div>
-
-          <div style={{
-            background: smColor + '10',
-            border: `1px solid ${smColor}40`,
-            borderRadius: '10px', padding: '10px 16px', flex: 1,
-            display: 'flex', alignItems: 'center', gap: '8px', minWidth: '160px'
-          }}>
-            <Coins size={16} color={smColor} />
-            <span style={{ fontWeight: 800, color: smColor, fontSize: '0.8rem' }}>
-              SM: {data.sm2} / C: {data.sm3}
             </span>
           </div>
         </div>
@@ -243,9 +231,9 @@ function BonosModal({ bonos, data, onClose, mode }) {
             <div style={{
               background: esMensual ? 'linear-gradient(135deg, #eff6ff, #dbeafe)' : 'linear-gradient(135deg, #f8fafc, #f1f5f9)',
               border: `1px solid ${esMensual ? '#bfdbfe' : '#e2e8f0'}`,
-              borderRadius: '14px', padding: '16px', textAlign: 'center', marginBottom: '16px'
+              borderRadius: '12px', padding: '10px', textAlign: 'center', marginBottom: '10px'
             }}>
-              <div style={{ fontSize: '0.65rem', fontWeight: 800, color: '#1e40af', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '4px' }}>
+              <div style={{ fontSize: '0.62rem', fontWeight: 800, color: '#1e40af', textTransform: 'uppercase', letterSpacing: '1px', marginBottom: '2px' }}>
                 {esMensual ? 'Total Bono Mensual' : 'Total Bono Trimestral'}
               </div>
               <div className="bonos-monto" style={{ fontSize: '1.4rem' }}>
@@ -285,8 +273,8 @@ function BonosModal({ bonos, data, onClose, mode }) {
             {esMensual ? (
               <>
                 {/* PRODUCTIVIDAD MENSUAL */}
-                <div style={{ marginBottom: '14px' }}>
-                  <h6 style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--primary-bank)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                <div style={{ marginBottom: '10px' }}>
+                  <h6 style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--primary-bank)', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <BarChart3 size={14} /> PRODUCTIVIDAD
                   </h6>
                   <div style={{ overflowX: 'auto' }}>
@@ -306,7 +294,7 @@ function BonosModal({ bonos, data, onClose, mode }) {
 
                 {/* INDICADORES MENSUAL */}
                 <div>
-                  <h6 style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--primary-bank)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
+                  <h6 style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--primary-bank)', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
                     <ClipboardList size={14} /> INDICADORES
                   </h6>
                   <div style={{ overflowX: 'auto' }}>
