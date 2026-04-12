@@ -179,10 +179,10 @@ function BonosModal({ bonos, data, onClose, mode }) {
     const bonoColor = bonoDisplay && bonoDisplay !== 'S/.0.00' ? '#002d72' : '#94a3b8';
     return (
       <tr>
-        <td>{label}</td>
-        <td className="metric-val" style={{ textAlign: 'center' }}>{avance || '-'}</td>
-        <td style={{ textAlign: 'center' }}>{estado ? fBadge(estado) : (avance ? fBadge(avance) : <span style={{ color: 'var(--text-muted)' }}>-</span>)}</td>
-        <td style={{ textAlign: 'center', fontWeight: 800, color: bonoColor }}>{bonoDisplay}</td>
+        <td style={{ padding: '5px 8px', fontSize: '0.75rem' }}>{label}</td>
+        <td className="metric-val" style={{ textAlign: 'center', padding: '5px 8px', fontSize: '0.75rem' }}>{avance || '-'}</td>
+        <td style={{ textAlign: 'center', padding: '5px 8px' }}>{estado ? fBadge(estado) : (avance ? fBadge(avance) : <span style={{ color: 'var(--text-muted)' }}>-</span>)}</td>
+        <td style={{ textAlign: 'center', fontWeight: 800, color: bonoColor, padding: '5px 8px', fontSize: '0.78rem' }}>{bonoDisplay}</td>
       </tr>
     );
   };
@@ -273,19 +273,31 @@ function BonosModal({ bonos, data, onClose, mode }) {
             {esMensual ? (
               <>
                 {/* PRODUCTIVIDAD MENSUAL */}
-                <div style={{ marginBottom: '10px' }}>
-                  <h6 style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--primary-bank)', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <BarChart3 size={14} /> PRODUCTIVIDAD
+                <div style={{ marginBottom: '8px' }}>
+                  <h6 style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--primary-bank)', marginBottom: '4px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <BarChart3 size={14} /> PRODUCTIVIDAD
+                    </div>
+                    {bonos.fechaPagoProductividad && (
+                      <div style={{ fontSize: '0.62rem', background: '#f1f5f9', padding: '2px 8px', borderRadius: '6px', color: '#475569', fontWeight: 700 }}>Pago: {bonos.fechaPagoProductividad}</div>
+                    )}
                   </h6>
                   <div style={{ overflowX: 'auto' }}>
                     <table className="table-premium">
-                      <thead><tr><th>Indicador</th><th style={{ textAlign: 'center' }}>Avance</th><th style={{ textAlign: 'center' }}>Estado</th><th style={{ textAlign: 'center' }}>Bono S/.</th></tr></thead>
+                      <thead>
+                        <tr>
+                          <th style={{ padding: '4px 8px', fontSize: '0.6rem' }}>Indicador</th>
+                          <th style={{ textAlign: 'center', padding: '4px 8px', fontSize: '0.6rem' }}>Avance</th>
+                          <th style={{ textAlign: 'center', padding: '4px 8px', fontSize: '0.6rem' }}>Estado</th>
+                          <th style={{ textAlign: 'center', padding: '4px 8px', fontSize: '0.6rem' }}>Bono S/.</th>
+                        </tr>
+                      </thead>
                       <tbody>
                         <BonoRow label="Saldo Mensual" avance={bonos.saldoMensualAvance} estado={bonos.estadoSaldoMensual} bono={bonos.bonoSaldoMensual} />
                         <BonoRow label="Colocación Mensual" avance={bonos.colocacionMensualAvance} estado={bonos.estadoColocacionMensual} bono={bonos.bonoColocacionMensual} />
                         <tr style={{ background: '#eff6ff' }}>
-                          <td colSpan={3} style={{ fontWeight: 900, color: '#1e40af', textAlign: 'right', borderRadius: '12px 0 0 12px' }}>TOTAL PRODUCTIVIDAD</td>
-                          <td style={{ textAlign: 'center', fontWeight: 900, fontSize: '1rem', color: '#1e40af', borderRadius: '0 12px 12px 0' }}>{bonos.totalProductividadMensual}</td>
+                          <td colSpan={3} style={{ fontWeight: 900, color: '#1e40af', textAlign: 'right', borderRadius: '12px 0 0 12px', padding: '6px 12px', fontSize: '0.75rem' }}>TOTAL PRODUCTIVIDAD</td>
+                          <td style={{ textAlign: 'center', fontWeight: 900, fontSize: '0.9rem', color: '#1e40af', borderRadius: '0 12px 12px 0', padding: '6px 12px' }}>{bonos.totalProductividadMensual}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -293,21 +305,33 @@ function BonosModal({ bonos, data, onClose, mode }) {
                 </div>
 
                 {/* INDICADORES MENSUAL */}
-                <div>
-                  <h6 style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--primary-bank)', marginBottom: '6px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                    <ClipboardList size={14} /> INDICADORES
+                <div style={{ marginBottom: '2px' }}>
+                  <h6 style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--primary-bank)', marginBottom: '4px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                      <ClipboardList size={14} /> INDICADORES
+                    </div>
+                    {bonos.fechaPagoIndicadores && (
+                      <div style={{ fontSize: '0.62rem', background: '#f1f5f9', padding: '2px 8px', borderRadius: '6px', color: '#475569', fontWeight: 700 }}>Pago: {bonos.fechaPagoIndicadores}</div>
+                    )}
                   </h6>
                   <div style={{ overflowX: 'auto' }}>
                     <table className="table-premium">
-                      <thead><tr><th>Indicador</th><th style={{ textAlign: 'center' }}>Avance</th><th style={{ textAlign: 'center' }}>Estado</th><th style={{ textAlign: 'center' }}>Bono S/.</th></tr></thead>
+                      <thead>
+                        <tr>
+                          <th style={{ padding: '4px 8px', fontSize: '0.6rem' }}>Indicador</th>
+                          <th style={{ textAlign: 'center', padding: '4px 8px', fontSize: '0.6rem' }}>Avance</th>
+                          <th style={{ textAlign: 'center', padding: '4px 8px', fontSize: '0.6rem' }}>Estado</th>
+                          <th style={{ textAlign: 'center', padding: '4px 8px', fontSize: '0.6rem' }}>Bono S/.</th>
+                        </tr>
+                      </thead>
                       <tbody>
                         <BonoRow label="Tasa Promedio" avance={bonos.tasaPromedioAvance} estado={bonos.estadoTasaPromedio} bono={bonos.bonoTasaPromedio} />
                         <BonoRow label="N° Operaciones" avance={bonos.nOperacionesAvance} estado={bonos.estadoOperaciones} bono={bonos.bonoOperaciones} />
                         <BonoRow label="Clientes Nuevos" avance={bonos.clientesNuevosAvance} estado={bonos.estadoNuevos} bono={bonos.bonoNuevos} />
                         <BonoRow label="Clientes Activos" avance={bonos.clientesActivosAvance} estado={bonos.estadoActivos} bono={bonos.bonoActivos} />
                         <tr style={{ background: '#eff6ff' }}>
-                          <td colSpan={3} style={{ fontWeight: 900, color: '#1e40af', textAlign: 'right', borderRadius: '12px 0 0 12px' }}>TOTAL INDICADORES</td>
-                          <td style={{ textAlign: 'center', fontWeight: 900, fontSize: '1rem', color: '#1e40af', borderRadius: '0 12px 12px 0' }}>{bonos.totalIndicadoresMensual}</td>
+                          <td colSpan={3} style={{ fontWeight: 900, color: '#1e40af', textAlign: 'right', borderRadius: '12px 0 0 12px', padding: '6px 12px', fontSize: '0.75rem' }}>TOTAL INDICADORES</td>
+                          <td style={{ textAlign: 'center', fontWeight: 900, fontSize: '0.9rem', color: '#1e40af', borderRadius: '0 12px 12px 0', padding: '6px 12px' }}>{bonos.totalIndicadoresMensual}</td>
                         </tr>
                       </tbody>
                     </table>
@@ -316,19 +340,31 @@ function BonosModal({ bonos, data, onClose, mode }) {
               </>
             ) : (
               /* PRODUCTIVIDAD TRIMESTRAL */
-              <div>
-                <h6 style={{ fontSize: '0.78rem', fontWeight: 800, color: 'var(--primary-bank)', marginBottom: '8px', display: 'flex', alignItems: 'center', gap: '6px' }}>
-                  <CalendarCheck size={14} /> PRODUCTIVIDAD TRIMESTRAL
+              <div style={{ marginBottom: '2px' }}>
+                <h6 style={{ fontSize: '0.75rem', fontWeight: 800, color: 'var(--primary-bank)', marginBottom: '4px', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '6px' }}>
+                    <CalendarCheck size={14} /> PRODUCTIVIDAD TRIMESTRAL
+                  </div>
+                  {bonos.fechaPagoTrim && (
+                    <div style={{ fontSize: '0.62rem', background: '#f1f5f9', padding: '2px 8px', borderRadius: '6px', color: '#475569', fontWeight: 700 }}>Pago: {bonos.fechaPagoTrim}</div>
+                  )}
                 </h6>
                 <div style={{ overflowX: 'auto' }}>
                   <table className="table-premium">
-                    <thead><tr><th>Indicador</th><th style={{ textAlign: 'center' }}>Avance</th><th style={{ textAlign: 'center' }}>Estado</th><th style={{ textAlign: 'center' }}>Bono S/.</th></tr></thead>
+                    <thead>
+                      <tr>
+                        <th style={{ padding: '4px 8px', fontSize: '0.6rem' }}>Indicador</th>
+                        <th style={{ textAlign: 'center', padding: '4px 8px', fontSize: '0.6rem' }}>Avance</th>
+                        <th style={{ textAlign: 'center', padding: '4px 8px', fontSize: '0.6rem' }}>Estado</th>
+                        <th style={{ textAlign: 'center', padding: '4px 8px', fontSize: '0.6rem' }}>Bono S/.</th>
+                      </tr>
+                    </thead>
                     <tbody>
                       <BonoRow label="Saldo Trimestral" avance={bonos.saldoTrimestralAvance} estado={bonos.estadoSaldoTrim} bono={bonos.bonoSaldoTrim} />
                       <BonoRow label="Colocación Trimestral" avance={bonos.colocacionTrimestralAvance} estado={bonos.estadoColocTrim} bono={bonos.bonoColocTrim} />
                       <tr style={{ background: '#eff6ff' }}>
-                        <td colSpan={3} style={{ fontWeight: 900, color: '#1e40af', textAlign: 'right', borderRadius: '12px 0 0 12px' }}>TOTAL TRIMESTRAL</td>
-                        <td style={{ textAlign: 'center', fontWeight: 900, fontSize: '1rem', color: '#1e40af', borderRadius: '0 12px 12px 0' }}>{bonos.bonoTrimestralTotal}</td>
+                        <td colSpan={3} style={{ fontWeight: 900, color: '#1e40af', textAlign: 'right', borderRadius: '12px 0 0 12px', padding: '6px 12px', fontSize: '0.75rem' }}>TOTAL TRIMESTRAL</td>
+                        <td style={{ textAlign: 'center', fontWeight: 900, fontSize: '0.9rem', color: '#1e40af', borderRadius: '0 12px 12px 0', padding: '6px 12px' }}>{bonos.bonoTrimestralTotal}</td>
                       </tr>
                     </tbody>
                   </table>
