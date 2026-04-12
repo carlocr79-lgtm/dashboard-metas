@@ -379,7 +379,7 @@ function BonosModal({ bonos, data, onClose, mode }) {
 }
 
 // ═══ COMPONENTE MEDIO CÍRCULO (SPEEDOMETER) ═══
-function SemiCircleGauge({ value, color }) {
+function SemiCircleGauge({ value, color, displayValue }) {
   const pctStr = (value || '0').toString().replace('%', '').replace(',', '.');
   const pctNum = parseFloat(pctStr) || 0;
   const pctClamped = Math.min(Math.max(pctNum, 0), 100);
@@ -402,7 +402,7 @@ function SemiCircleGauge({ value, color }) {
         </svg>
       </div>
       <div style={{ fontSize: '1rem', fontWeight: 900, color: color, marginTop: '2px', letterSpacing: '-0.5px' }}>
-        {Math.round(pctNum)}%
+        {displayValue !== undefined ? displayValue : Math.round(pctNum) + '%'}
       </div>
     </div>
   );
@@ -411,7 +411,8 @@ function SemiCircleGauge({ value, color }) {
 // ═══ COMPONENTE TARJETA GRID (PREMIUM ENRICHED CARD) ═══
 function EnrichedCard({ item }) {
   const Icon = item.icon || TrendingUp;
-  const color = getStatusColor(item.s);
+  const isMora = item.l.toLowerCase().includes('mora');
+  let color = getStatusColor(item.s);
 
   // Lógica de cálculo matemático exacto para diferencias
   const parseNum = (s) => {
@@ -438,8 +439,10 @@ function EnrichedCard({ item }) {
     if (fReal > 100) fReal = fReal / 100;
   }
 
+  if (isMora) color = getMoraColor(item.r);
+
   const diff = fReal - fMeta;
-  const pctReal = fMeta === 0 ? (fReal > 0 ? 100 : 0) : Math.min((fReal / fMeta) * 100, 100);
+  let pctReal = fMeta === 0 ? (fReal > 0 ? 100 : 0) : Math.min((fReal / fMeta) * 100, 100);
 
   let diffText = '';
   let diffColor = '#64748b';
@@ -448,15 +451,24 @@ function EnrichedCard({ item }) {
   if (item.type === 'money') formattedDiff = 'S/. ' + formattedDiff;
   if (item.type === 'percent') formattedDiff = formattedDiff + '%';
 
-  if (diff >= 0) {
-    diffText = `🔥 Superado (+${formattedDiff})`;
-    diffColor = '#059669';
+  if (!isMora) {
+    if (diff >= 0) {
+      diffText = `🔥 Superado (+${formattedDiff})`;
+      diffColor = '#059669';
+    } else {
+      diffText = `⚠️ Faltan ${formattedDiff}`;
+      diffColor = '#da291c';
+    }
+    if (item.type === 'percent' && diff < 0) diffText = `⚠️ Debajo por ${formattedDiff}`;
   } else {
-    diffText = `⚠️ Faltan ${formattedDiff}`;
-    diffColor = '#da291c';
+    if (diff <= 0) {
+      diffText = `🔥 Excelente (-${formattedDiff})`;
+      diffColor = '#002d72';
+    } else {
+      diffText = `⚠️ Excedido (+${formattedDiff})`;
+      diffColor = '#da291c';
+    }
   }
-
-  if (item.type === 'percent' && diff < 0) diffText = `⚠️ Debajo por ${formattedDiff}`;
 
   if (!item.m || item.m === '-' || !item.r || item.r === '-') {
     diffText = 'Pendiente';
@@ -466,14 +478,31 @@ function EnrichedCard({ item }) {
   const sNum = parseNum(item.s);
   let statusText = 'En Riesgo';
   let badgeClass = 'badge-soft-warning';
-  if (sNum >= 100) { statusText = 'Excelente'; badgeClass = 'badge-soft-success'; }
-  else if (sNum < 80) { statusText = 'Crítico'; badgeClass = 'badge-soft-danger'; }
+
+  if (!isMora) {
+    if (sNum >= 100) { statusText = 'Excelente'; badgeClass = 'badge-soft-success'; }
+    else if (sNum < 80) { statusText = 'Crítico'; badgeClass = 'badge-soft-danger'; }
+  } else {
+    if (fReal <= fMeta) { statusText = 'Excelente'; badgeClass = 'badge-soft-success'; }
+    else if (fReal <= fMeta + 0.5) { statusText = 'En Riesgo'; badgeClass = 'badge-soft-warning'; }
+    else { statusText = 'Crítico'; badgeClass = 'badge-soft-danger'; }
+  }
 
   let mDisplay = item.m;
   let rDisplay = item.r;
   if (item.type === 'percent') {
     mDisplay = fMeta.toFixed(2) + '%';
     rDisplay = fReal.toFixed(2) + '%';
+  }
+
+  let gaugeValue = item.s;
+  let gaugeDisplayValue = undefined;
+
+  if (isMora) {
+    const fillPct = fMeta > 0 ? (fReal / fMeta) * 100 : 0;
+    gaugeValue = Math.min(fillPct, 100) + '%';
+    gaugeDisplayValue = fReal.toFixed(2) + '%';
+    pctReal = Math.min(fillPct, 100);
   }
 
   return (
@@ -500,7 +529,7 @@ function EnrichedCard({ item }) {
           </div>
         </div>
         <div style={{ marginRight: '-4px' }}>
-          <SemiCircleGauge value={item.s} color={color} />
+          <SemiCircleGauge value={gaugeValue} color={color} displayValue={gaugeDisplayValue} />
         </div>
       </div>
 
