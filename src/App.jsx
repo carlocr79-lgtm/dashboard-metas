@@ -71,7 +71,7 @@ function App() {
   const [dashboardData, setDashboardData] = useState(null);
   const [userEmail, setUserEmail] = useState('');
 
-  // Auto-login al recargar (persistencia en sesión)
+  // Auto-login al recargar (persistencia en sesión) + refresh de datos
   useEffect(() => {
     const saved = sessionStorage.getItem('metas_session');
     if (saved) {
@@ -79,6 +79,16 @@ function App() {
         const parsed = JSON.parse(saved);
         setDashboardData(parsed.data);
         setUserEmail(parsed.email);
+        
+        // Refresh silencioso: traer datos frescos del backend en segundo plano
+        callGAS('obtenerMisDatosConEmail', [parsed.email])
+          .then(freshData => {
+            if (freshData && !freshData.error && !freshData.accessDenied) {
+              setDashboardData(freshData);
+              sessionStorage.setItem('metas_session', JSON.stringify({ data: freshData, email: parsed.email }));
+            }
+          })
+          .catch(() => {}); // Silencioso: si falla, al menos se muestra la data cacheada
       } catch(e) {}
     }
   }, []);
